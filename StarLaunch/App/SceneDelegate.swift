@@ -5,49 +5,91 @@
 //  Created by Celal Can Sağnak on 8.10.2025.
 //
 
+import Combine
 import UIKit
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
-    
+
     var window: UIWindow?
-    
-    func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
+    var coordinator: MainCoordinator?
+    private var cancellables = Set<AnyCancellable>()
+
+    func scene(
+        _ scene: UIScene, willConnectTo session: UISceneSession,
+        options connectionOptions: UIScene.ConnectionOptions
+    ) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         let window = UIWindow(windowScene: windowScene)
         let rootViewController = SplashViewController()
         window.rootViewController = rootViewController
         self.window = window
         window.makeKeyAndVisible()
-    }
-    
-    func sceneDidDisconnect(_ scene: UIScene) {
-        // Called as the scene is being released by the system.
-        // This occurs shortly after the scene enters the background, or when its session is discarded.
-        // Release any resources associated with this scene that can be re-created the next time the scene connects.
-        // The scene may re-connect later, as its session was not necessarily discarded (see `application:didDiscardSceneSessions` instead).
-    }
-    
-    func sceneDidBecomeActive(_ scene: UIScene) {
-        // Called when the scene has moved from an inactive state to an active state.
-        // Use this method to restart any tasks that were paused (or not yet started) when the scene was inactive.
-    }
-    
-    func sceneWillResignActive(_ scene: UIScene) {
-        // Called when the scene will move from an active state to an inactive state.
-        // This may occur due to temporary interruptions (ex. an incoming phone call).
-    }
-    
-    func sceneWillEnterForeground(_ scene: UIScene) {
-        // Called as the scene transitions from the background to the foreground.
-        // Use this method to undo the changes made on entering the background.
-    }
-    
-    func sceneDidEnterBackground(_ scene: UIScene) {
-        // Called as the scene transitions from the foreground to the background.
-        // Use this method to save data, release shared resources, and store enough scene-specific state information
-        // to restore the scene back to its current state.
-    }
-    
-    
-}
 
+        setupNetworkStatusBanner()
+        setupNotificationObservers()
+    }
+
+    private func setupNetworkStatusBanner() {
+        guard let window = window else { return }
+
+        NetworkMonitor.shared.$isConnected
+            .dropFirst()
+            .removeDuplicates()
+            .receive(on: DispatchQueue.main)
+            .sink { isConnected in
+                if isConnected {
+                    NetworkStatusBanner.shared.showOnline(in: window)
+                } else {
+                    NetworkStatusBanner.shared.showOffline(in: window)
+                }
+            }
+            .store(in: &cancellables)
+    }
+
+    private func setupNotificationObservers() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleOpenLaunchDetail(_:)),
+            name: .openLaunchDetail,
+            object: nil
+        )
+    }
+
+    @objc private func handleOpenLaunchDetail(_ notification: Notification) {
+        guard let launchID = notification.userInfo?["launchID"] as? String else { return }
+        coordinator?.showLaunchDetail(launchID: launchID)
+    }
+
+    func setupMainApp() {
+        guard let window = window else { return }
+
+        let navigationController = UINavigationController()
+        coordinator = MainCoordinator(navigationController: navigationController)
+        coordinator?.start()
+
+        window.rootViewController = navigationController
+
+        UIView.transition(
+            with: window, duration: 0.5, options: .transitionCrossDissolve, animations: nil)
+
+        DependencyContainer.shared.analyticsService.trackEvent(AnalyticsEvent.appOpen)
+    }
+
+    func sceneDidDisconnect(_ scene: UIScene) {
+        CacheManager.shared.clearExpired()
+    }
+
+    func sceneDidBecomeActive(_ scene: UIScene) {
+        UIApplication.shared.applicationIconBadgeNumber = 0
+    }
+
+    func sceneWillResignActive(_ scene: UIScene) {
+    }
+
+    func sceneWillEnterForeground(_ scene: UIScene) {
+    }
+
+    func sceneDidEnterBackground(_ scene: UIScene) {
+        CacheManager.shared.clearExpired()
+    }
+}
