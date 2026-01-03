@@ -9,7 +9,7 @@ import Foundation
 
 struct APIConstants {
 
-    private static let baseURL = "https://lldev.thespacedevs.com/2.2.0"
+    private static let baseURL = "https://ll.thespacedevs.com/2.2.0"
 
     static let starshipDashboard = baseURL + "/dashboard/starship/"
     static let allLaunches = baseURL + "/launch/?limit=1000"
