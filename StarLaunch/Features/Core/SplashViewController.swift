@@ -14,30 +14,127 @@ final class SplashViewController: UIViewController {
     private var currentCharacterIndex = 0
     private let fullText = "StarLaunch"
 
+    private var particleEmitter: CAEmitterLayer?
+    private var pulseAnimationLayer: CAShapeLayer?
+
+    // Missing properties restoration
+    private let progressContainer: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = Colors.cardBackground
+        view.layer.cornerRadius = 3
+        view.clipsToBounds = true
+        return view
+    }()
+
+    private let progressBar: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = .clear
+        return view
+    }()
+
+    private let progressGradient: CAGradientLayer = {
+        let layer = CAGradientLayer()
+        layer.colors = Colors.primaryGradient
+        layer.startPoint = CGPoint(x: 0, y: 0.5)
+        layer.endPoint = CGPoint(x: 1, y: 0.5)
+        return layer
+    }()
+
+    private let activityIndicator: UIActivityIndicatorView = {
+        let indicator = UIActivityIndicatorView(style: .medium)
+        indicator.translatesAutoresizingMaskIntoConstraints = false
+        indicator.color = Colors.subtitleColor
+        indicator.hidesWhenStopped = true
+        return indicator
+    }()
+
+    private let versionLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.textColor = Colors.subtitleColor.withAlphaComponent(0.6)
+        label.font = .systemFont(ofSize: 12)
+        if let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String {
+            label.text = "v\(version)"
+        }
+        return label
+    }()
+
+    private var progressWidthConstraint: NSLayoutConstraint?
+
     private let viewModel = DashboardViewModel()
     private var cancellables = Set<AnyCancellable>()
 
-    private let backgroundImageView: UIImageView = {
+    // MARK: - UI Components
+
+    private let gradientBackgroundLayer: CAGradientLayer = {
+        let layer = CAGradientLayer()
+        layer.colors = [
+            UIColor(hex: "#0A0F1C").cgColor,
+            UIColor(hex: "#1E1B4B").cgColor,
+            UIColor(hex: "#0F172A").cgColor,
+        ]
+        layer.locations = [0, 0.5, 1]
+        layer.startPoint = CGPoint(x: 0.5, y: 0)
+        layer.endPoint = CGPoint(x: 0.5, y: 1)
+        return layer
+    }()
+
+    private let starsOverlayView: UIImageView = {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.image = UIImage(named: "background_1")
+        imageView.image = UIImage(named: "background_2")
         imageView.contentMode = .scaleAspectFill
+        imageView.alpha = 0.4
         return imageView
     }()
 
-    private let blurEffectView: UIVisualEffectView = {
-        let blurEffect = UIBlurEffect(style: .dark)
-        let view = UIVisualEffectView(effect: blurEffect)
+    private let rocketContainer: UIView = {
+        let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+
+    private let rocketImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.image = UIImage(systemName: "paperplane.fill")
+        imageView.tintColor = Colors.accentCyan
+        imageView.contentMode = .scaleAspectFit
+        imageView.transform = CGAffineTransform(rotationAngle: -.pi / 4)
+        return imageView
+    }()
+
+    private let glowView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = Colors.accentCyan.withAlphaComponent(0.3)
+        view.layer.cornerRadius = 60
+        view.alpha = 0
         return view
     }()
 
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.textColor = Colors.titleColor
-        label.font = .systemFont(ofSize: 36, weight: .bold)
-        label.text = ""
+        label.textColor = .white
+        label.font = .systemFont(ofSize: 42, weight: .bold)
+        label.text = L10n.splashTitle
+        label.textAlignment = .center
+        label.alpha = 0
+        return label
+    }()
+
+    private let taglineLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.textColor = Colors.accentCyan
+        label.font = .systemFont(ofSize: 14, weight: .semibold)
+        label.text = L10n.splashTagline.uppercased()
+        label.textAlignment = .center
+        label.alpha = 0
+        label.transform = CGAffineTransform(translationX: 0, y: 10)
         return label
     }()
 
@@ -45,191 +142,239 @@ final class SplashViewController: UIViewController {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textColor = Colors.subtitleColor
-        label.font = .systemFont(ofSize: 14, weight: .medium)
-        label.text = "Loading space data..."
+        label.font = .systemFont(ofSize: 13, weight: .medium)
+        label.text = L10n.splashLoading
+        label.textAlignment = .center
         label.alpha = 0
         return label
     }()
 
-    private let activityIndicator: UIActivityIndicatorView = {
-        let indicator = UIActivityIndicatorView(style: .medium)
-        indicator.translatesAutoresizingMaskIntoConstraints = false
-        indicator.color = Colors.titleColor
-        indicator.hidesWhenStopped = true
-        return indicator
-    }()
-
-    deinit {
-        typingTimer?.invalidate()
-        typingTimer = nil
-        cancellables.removeAll()
-    }
-
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
+        startAnimations()
+
+        // Delay data fetching slightly to allow animations to start
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
+            self?.activityIndicator.startAnimating()
+            self?.animateProgress()
+            self?.viewModel.fetchStarshipData()
+        }
+
         bindViewModel()
     }
 
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        startTypingAnimation()
-
-        UIView.animate(withDuration: 0.5, delay: 0.5) {
-            self.subtitleLabel.alpha = 1
-        }
-
-        activityIndicator.startAnimating()
-        viewModel.fetchStarshipData()
-    }
-
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        typingTimer?.invalidate()
-        typingTimer = nil
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        gradientBackgroundLayer.frame = view.bounds
+        progressGradient.frame = progressBar.bounds
     }
 
     private func bindViewModel() {
-        viewModel.$programInfo
-            .compactMap { $0 }
+        viewModel.$isLoading
             .receive(on: DispatchQueue.main)
-            .first()
-            .sink { [weak self] _ in
-                self?.navigateToDashboard()
+            .sink { [weak self] isLoading in
+                if !isLoading {
+                    self?.activityIndicator.stopAnimating()
+                }
             }
             .store(in: &cancellables)
 
         viewModel.$errorMessage
-            .compactMap { $0 }
             .receive(on: DispatchQueue.main)
+            .compactMap { $0 }
             .sink { [weak self] message in
                 self?.handleError(message: message)
             }
             .store(in: &cancellables)
 
-        viewModel.$isOfflineMode
-            .filter { $0 }
-            .receive(on: DispatchQueue.main)
-            .first()
-            .sink { [weak self] _ in
-                self?.navigateToDashboard()
-            }
-            .store(in: &cancellables)
-
-        viewModel.$isLoading
+        // When data is ready (launch count > 0 or success), proceed
+        viewModel.$launchCount
             .dropFirst()
-            .filter { !$0 }
             .receive(on: DispatchQueue.main)
-            .first()
-            .sink { [weak self] _ in
-                guard let self = self else { return }
-                if self.viewModel.programInfo != nil || self.viewModel.isOfflineMode {
-                    self.navigateToDashboard()
+            .sink { [weak self] count in
+                if count > 0 {
+                    self?.animateProgressComplete()
                 }
             }
             .store(in: &cancellables)
+    }
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 10) { [weak self] in
-            guard let self = self, self.view.window?.rootViewController === self else { return }
+    private func startAnimations() {
+        UIView.animate(withDuration: 1.0) {
+            self.titleLabel.alpha = 1
+            self.glowView.alpha = 1
+            self.glowView.transform = CGAffineTransform(scaleX: 1.2, y: 1.2)
+        }
+
+        UIView.animate(withDuration: 0.8, delay: 0.3, options: .curveEaseOut) {
+            self.taglineLabel.alpha = 1
+            self.taglineLabel.transform = .identity
+            self.subtitleLabel.alpha = 1
+        }
+
+        startTypingAnimation()
+    }
+
+    private func animateProgress() {
+        // Simulate progress for 2 seconds mostly
+        self.view.layoutIfNeeded()
+        UIView.animate(withDuration: 1.5, delay: 0, options: .curveEaseInOut) {
+            self.progressWidthConstraint?.constant = 150  // Partial progress
+            self.view.layoutIfNeeded()
+        }
+    }
+
+    private func animateProgressComplete() {
+        self.view.layoutIfNeeded()
+        // Update constraint to match container width
+        progressWidthConstraint?.isActive = false
+        progressWidthConstraint = progressBar.widthAnchor.constraint(
+            equalTo: progressContainer.widthAnchor)
+        progressWidthConstraint?.isActive = true
+
+        subtitleLabel.text = L10n.splashReady
+        subtitleLabel.textColor = Colors.success
+
+        UIView.animate(withDuration: 0.4, delay: 0, options: .curveEaseOut) {
+            self.view.layoutIfNeeded()
+        } completion: { _ in
+            HapticManager.shared.success()
+            self.animateExitAndNavigate()
+        }
+    }
+
+    private func animateExitAndNavigate() {
+        UIView.animate(
+            withDuration: 0.5,
+            animations: {
+                self.rocketImageView.transform = CGAffineTransform(translationX: 0, y: -1000)
+                self.titleLabel.alpha = 0
+                self.taglineLabel.alpha = 0
+                self.subtitleLabel.alpha = 0
+                self.progressContainer.alpha = 0
+                self.versionLabel.alpha = 0
+            }
+        ) { _ in
             self.navigateToDashboard()
         }
     }
 
     private func navigateToDashboard() {
-        typingTimer?.invalidate()
-        typingTimer = nil
-        activityIndicator.stopAnimating()
-
-        guard let window = view.window else {
-            return
+        if let sceneDelegate = view.window?.windowScene?.delegate as? SceneDelegate {
+            sceneDelegate.setupMainApp()
         }
-
-
-        let navigationController = UINavigationController()
-        let coordinator = MainCoordinator(navigationController: navigationController)
-
-        let dashboardVC = DashboardViewController(
-            viewModel: self.viewModel, coordinator: coordinator)
-        navigationController.setViewControllers([dashboardVC], animated: false)
-
-        if let sceneDelegate = window.windowScene?.delegate as? SceneDelegate {
-            sceneDelegate.coordinator = coordinator
-        }
-
-        window.rootViewController = navigationController
-        window.makeKeyAndVisible()
-
-        UIView.transition(with: window, duration: 0.4, options: .transitionCrossDissolve) {
-        }
-    }
-
-    private func navigateWithoutCoordinator() {
-        navigateToDashboard()
     }
 
     private func handleError(message: String) {
         activityIndicator.stopAnimating()
-        subtitleLabel.text = "Connection error"
-        subtitleLabel.textColor = .systemOrange
+        subtitleLabel.text = L10n.error
+        subtitleLabel.textColor = Colors.warning
 
         if viewModel.isOfflineMode {
-            navigateToDashboard()
+            // If offline mode is handled by VM it might have data
+            animateProgressComplete()
         } else {
             showErrorAlert(message: message)
         }
     }
 
     private func showErrorAlert(message: String) {
-        let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
+        let alert = UIAlertController(title: L10n.error, message: message, preferredStyle: .alert)
         alert.addAction(
             UIAlertAction(
-                title: "Retry", style: .default,
+                title: L10n.retry, style: .default,
                 handler: { [weak self] _ in
-                    self?.subtitleLabel.text = "Loading space data..."
+                    self?.subtitleLabel.text = L10n.splashLoading
                     self?.subtitleLabel.textColor = Colors.subtitleColor
                     self?.activityIndicator.startAnimating()
+                    self?.animateProgress()
                     self?.viewModel.refreshData()
                 }))
 
         if OfflineDataManager.shared.hasOfflineData {
             alert.addAction(
                 UIAlertAction(
-                    title: "Use Offline Data", style: .default,
+                    title: L10n.launchesOfflineMode, style: .default,
                     handler: { [weak self] _ in
-                        self?.navigateToDashboard()
+                        self?.animateProgressComplete()
                     }))
         }
 
         present(alert, animated: true)
     }
 
+    // MARK: - Setup UI
+
     private func setupUI() {
-        view.addSubview(backgroundImageView)
-        view.addSubview(blurEffectView)
+        view.backgroundColor = Colors.appBackground
+        view.layer.insertSublayer(gradientBackgroundLayer, at: 0)
+
+        view.addSubview(starsOverlayView)
+        view.addSubview(glowView)
+        view.addSubview(rocketContainer)
+        rocketContainer.addSubview(rocketImageView)
         view.addSubview(titleLabel)
+        view.addSubview(taglineLabel)
         view.addSubview(subtitleLabel)
+        view.addSubview(progressContainer)
+        progressContainer.addSubview(progressBar)
+        progressBar.layer.addSublayer(progressGradient)
         view.addSubview(activityIndicator)
+        view.addSubview(versionLabel)
+
+        progressWidthConstraint = progressBar.widthAnchor.constraint(equalToConstant: 0)
 
         NSLayoutConstraint.activate([
-            backgroundImageView.topAnchor.constraint(equalTo: view.topAnchor),
-            backgroundImageView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            backgroundImageView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            backgroundImageView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            starsOverlayView.topAnchor.constraint(equalTo: view.topAnchor),
+            starsOverlayView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            starsOverlayView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            starsOverlayView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
 
-            blurEffectView.topAnchor.constraint(equalTo: view.topAnchor),
-            blurEffectView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            blurEffectView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            blurEffectView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            rocketContainer.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            rocketContainer.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -100),
+            rocketContainer.widthAnchor.constraint(equalToConstant: 80),
+            rocketContainer.heightAnchor.constraint(equalToConstant: 80),
+
+            rocketImageView.centerXAnchor.constraint(equalTo: rocketContainer.centerXAnchor),
+            rocketImageView.centerYAnchor.constraint(equalTo: rocketContainer.centerYAnchor),
+            rocketImageView.widthAnchor.constraint(equalToConstant: 60),
+            rocketImageView.heightAnchor.constraint(equalToConstant: 60),
+
+            glowView.centerXAnchor.constraint(equalTo: rocketContainer.centerXAnchor),
+            glowView.centerYAnchor.constraint(equalTo: rocketContainer.centerYAnchor),
+            glowView.widthAnchor.constraint(equalToConstant: 120),
+            glowView.heightAnchor.constraint(equalToConstant: 120),
 
             titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            titleLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -20),
+            titleLabel.topAnchor.constraint(equalTo: rocketContainer.bottomAnchor, constant: 30),
+            titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            titleLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+
+            taglineLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            taglineLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 8),
 
             subtitleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            subtitleLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 16),
+            subtitleLabel.topAnchor.constraint(equalTo: taglineLabel.bottomAnchor, constant: 40),
+
+            progressContainer.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            progressContainer.topAnchor.constraint(
+                equalTo: subtitleLabel.bottomAnchor, constant: 16),
+            progressContainer.widthAnchor.constraint(equalToConstant: 200),
+            progressContainer.heightAnchor.constraint(equalToConstant: 6),
+
+            progressBar.leadingAnchor.constraint(equalTo: progressContainer.leadingAnchor),
+            progressBar.topAnchor.constraint(equalTo: progressContainer.topAnchor),
+            progressBar.bottomAnchor.constraint(equalTo: progressContainer.bottomAnchor),
+            progressWidthConstraint!,
 
             activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             activityIndicator.topAnchor.constraint(
-                equalTo: subtitleLabel.bottomAnchor, constant: 16),
+                equalTo: progressContainer.bottomAnchor, constant: 20),
+
+            versionLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            versionLabel.bottomAnchor.constraint(
+                equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
         ])
     }
 
@@ -239,7 +384,7 @@ final class SplashViewController: UIViewController {
         currentCharacterIndex = 0
 
         typingTimer = Timer.scheduledTimer(
-            timeInterval: 0.1,
+            timeInterval: 0.08,
             target: self,
             selector: #selector(typeNextCharacter),
             userInfo: nil,
@@ -252,13 +397,14 @@ final class SplashViewController: UIViewController {
             let index = fullText.index(fullText.startIndex, offsetBy: currentCharacterIndex)
             titleLabel.text?.append(fullText[index])
             currentCharacterIndex += 1
+
+            // Add subtle haptic for each character
+            if currentCharacterIndex % 3 == 0 {
+                HapticManager.shared.lightTap()
+            }
         } else {
             typingTimer?.invalidate()
             typingTimer = nil
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) { [weak self] in
-                guard self?.typingTimer == nil else { return }
-                self?.startTypingAnimation()
-            }
         }
     }
 }

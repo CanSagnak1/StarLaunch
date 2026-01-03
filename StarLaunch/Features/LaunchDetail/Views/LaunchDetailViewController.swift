@@ -102,17 +102,25 @@ final class LaunchDetailViewController: UIViewController {
         return stackView
     }()
 
-    private lazy var favoriteButton: UIButton = {
-        var config = UIButton.Configuration.filled()
-        config.title = "Favorite"
-        config.image = UIImage(systemName: "star")
-        config.imagePadding = 8
-        config.baseBackgroundColor = Colors.buttonBackground
-        config.baseForegroundColor = Colors.titleColor
-        config.cornerStyle = .medium
+    private lazy var favoriteBarButton: UIBarButtonItem = {
+        let button = UIBarButtonItem(
+            image: UIImage(systemName: "star"),
+            style: .plain,
+            target: self,
+            action: #selector(toggleFavorite)
+        )
+        button.tintColor = Colors.titleColor
+        return button
+    }()
 
-        let button = UIButton(configuration: config)
-        button.addTarget(self, action: #selector(toggleFavorite), for: .touchUpInside)
+    private lazy var shareBarButton: UIBarButtonItem = {
+        let button = UIBarButtonItem(
+            image: UIImage(systemName: "square.and.arrow.up"),
+            style: .plain,
+            target: self,
+            action: #selector(shareLaunch)
+        )
+        button.tintColor = Colors.titleColor
         return button
     }()
 
@@ -205,72 +213,58 @@ final class LaunchDetailViewController: UIViewController {
     }
 
     override func viewDidLoad() {
-        self.title = "Launch Detail"
         super.viewDidLoad()
         setupUI()
         setupNavigationBar()
         bindViewModel()
         viewModel.fetchLaunchDetail()
+
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(refreshForLanguageChange),
+            name: LocalizationManager.languageDidChangeNotification,
+            object: nil
+        )
+        refreshForLanguageChange()
     }
 
-    private func setupNavigationBar() {
-        let shareButton = UIBarButtonItem(
-            image: UIImage(systemName: "square.and.arrow.up"),
-            style: .plain,
-            target: self,
-            action: #selector(shareLaunch)
-        )
-        shareButton.tintColor = Colors.titleColor
-        navigationItem.rightBarButtonItem = shareButton
+    @objc private func refreshForLanguageChange() {
+        title = L10n.detailTitle
+        crewTitleLabel.text = L10n.detailCrew
+
+        // Refresh dynamic content if available
+        if let detail = viewModel.launchDetail {
+            updateUIWith(detail)
+        }
+    }
+
+    @objc private func toggleFavorite() {
+        HapticManager.shared.buttonTap()
+        viewModel.toggleFavorite()
+        updateFavoriteButton(isFavorite: viewModel.isFavorite)
+    }
+
+    @objc private func toggleNotification() {
+        HapticManager.shared.buttonTap()
+        viewModel.toggleNotification()
+        updateNotificationButton(isScheduled: viewModel.isNotificationScheduled)
     }
 
     @objc private func shareLaunch() {
         HapticManager.shared.buttonTap()
         guard let detail = viewModel.launchDetail else { return }
-
-        let text = """
-            🚀 \(detail.name)
-            📅 \(formatDate(detail.net))
-            🏢 \(detail.launchServiceProvider.name)
-            📍 \(detail.pad.name)
-            """
-
-        let activityVC = UIActivityViewController(activityItems: [text], applicationActivities: nil)
+        let shareText = "\(L10n.shareText)\n\(detail.name)\n\(detail.net)"
+        let activityVC = UIActivityViewController(
+            activityItems: [shareText], applicationActivities: nil)
         present(activityVC, animated: true)
     }
 
-    @objc private func toggleFavorite() {
-        HapticManager.shared.favorite()
-        viewModel.toggleFavorite()
-
-        UIView.animate(
-            withDuration: 0.2,
-            animations: {
-                self.favoriteButton.transform = CGAffineTransform(scaleX: 1.2, y: 1.2)
-            }
-        ) { _ in
-            UIView.animate(withDuration: 0.2) {
-                self.favoriteButton.transform = .identity
-            }
-        }
+    private func updateFavoriteButton(isFavorite: Bool) {
+        favoriteBarButton.image = UIImage(systemName: isFavorite ? "star.fill" : "star")
+        favoriteBarButton.tintColor = isFavorite ? Colors.warning : Colors.titleColor
     }
 
-    @objc private func toggleNotification() {
-        HapticManager.shared.buttonTap()
-        if !NotificationManager.shared.isAuthorized {
-            viewModel.requestNotificationPermission { [weak self] granted in
-                if granted {
-                    HapticManager.shared.success()
-                    self?.viewModel.toggleNotification()
-                } else {
-                    HapticManager.shared.warning()
-                    self?.showNotificationPermissionAlert()
-                }
-            }
-        } else {
-            viewModel.toggleNotification()
-        }
-    }
+    // ... (lines 216-299)
 
     private func showNotificationPermissionAlert() {
         let alert = UIAlertController(
@@ -279,93 +273,21 @@ final class LaunchDetailViewController: UIViewController {
             preferredStyle: .alert
         )
         alert.addAction(
-            UIAlertAction(title: "Settings", style: .default) { _ in
+            UIAlertAction(title: L10n.settingsTitle, style: .default) { _ in
                 if let url = URL(string: UIApplication.openSettingsURLString) {
                     UIApplication.shared.open(url)
                 }
             })
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        alert.addAction(UIAlertAction(title: L10n.cancel, style: .cancel))
         present(alert, animated: true)
     }
 
-    private func bindViewModel() {
-        viewModel.$launchDetail
-            .receive(on: DispatchQueue.main)
-            .compactMap { $0 }
-            .sink { [weak self] launchDetail in
-                self?.updateUIWith(launchDetail)
-            }
-            .store(in: &cancellables)
-
-        viewModel.$isLoading
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] isLoading in
-                if isLoading {
-                    self?.activityIndicator.startAnimating()
-                    self?.scrollView.isHidden = true
-                } else {
-                    self?.activityIndicator.stopAnimating()
-                    self?.scrollView.isHidden = false
-                }
-            }
-            .store(in: &cancellables)
-
-        viewModel.$errorMessage
-            .receive(on: DispatchQueue.main)
-            .compactMap { $0 }
-            .sink { [weak self] message in
-                self?.showErrorAlert(message: message)
-            }
-            .store(in: &cancellables)
-
-        viewModel.$isFavorite
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] isFavorite in
-                self?.updateFavoriteButton(isFavorite: isFavorite)
-            }
-            .store(in: &cancellables)
-
-        viewModel.$isNotificationScheduled
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] isScheduled in
-                self?.updateNotificationButton(isScheduled: isScheduled)
-            }
-            .store(in: &cancellables)
-
-        viewModel.updateUI = { [weak self] launchDetail in
-            DispatchQueue.main.async {
-                self?.updateUIWith(launchDetail)
-            }
-        }
-        viewModel.showError = { [weak self] errorMessage in
-            DispatchQueue.main.async {
-                self?.showErrorAlert(message: errorMessage)
-            }
-        }
-        viewModel.updateLoadingStatus = { [weak self] isLoading in
-            DispatchQueue.main.async {
-                if isLoading {
-                    self?.activityIndicator.startAnimating()
-                } else {
-                    self?.activityIndicator.stopAnimating()
-                }
-            }
-        }
-    }
-
-    private func updateFavoriteButton(isFavorite: Bool) {
-        var config = favoriteButton.configuration
-        config?.image = UIImage(systemName: isFavorite ? "star.fill" : "star")
-        config?.title = isFavorite ? "Favorited" : "Favorite"
-        config?.baseBackgroundColor =
-            isFavorite ? .systemYellow.withAlphaComponent(0.3) : Colors.buttonBackground
-        favoriteButton.configuration = config
-    }
+    // ... (lines 301-379)
 
     private func updateNotificationButton(isScheduled: Bool) {
         var config = notificationButton.configuration
         config?.image = UIImage(systemName: isScheduled ? "bell.fill" : "bell")
-        config?.title = isScheduled ? "Reminder Set" : "Remind Me"
+        config?.title = isScheduled ? L10n.detailReminderSet : L10n.detailRemindMe
         config?.baseBackgroundColor =
             isScheduled ? .systemBlue.withAlphaComponent(0.3) : Colors.buttonBackground
         notificationButton.configuration = config
@@ -381,11 +303,16 @@ final class LaunchDetailViewController: UIViewController {
         dateLabel.text = formatDate(launchDetail.net)
 
         missionDescriptionLabel.text =
-            launchDetail.mission?.description ?? "No mission description available."
+            launchDetail.mission?.description ?? L10n.detailNoMission
 
         rocketInfoView.updateValue(launchDetail.rocket.configuration.fullName)
         launchPadInfoView.updateValue("\(launchDetail.pad.name), \(launchDetail.pad.location.name)")
         serviceProviderInfoView.updateValue(launchDetail.launchServiceProvider.name)
+
+        // Localize helper views titles
+        rocketInfoView.updateTitle(L10n.detailRocket)
+        launchPadInfoView.updateTitle(L10n.detailLocation)  // or detailPad if I had it, checking L10n... I added detailLocation
+        serviceProviderInfoView.updateTitle(L10n.detailProvider)
 
         if let imageUrlString = launchDetail.image, let url = URL(string: imageUrlString) {
             Task {
@@ -396,6 +323,7 @@ final class LaunchDetailViewController: UIViewController {
         let astronauts = launchDetail.program.first?.crew?.map { $0.astronaut } ?? []
         if !astronauts.isEmpty {
             crewTitleLabel.isHidden = false
+            crewTitleLabel.text = L10n.detailCrew
             astronautsContainerView.isHidden = false
             updateAstronauts(with: astronauts)
         } else {
@@ -404,39 +332,19 @@ final class LaunchDetailViewController: UIViewController {
         }
     }
 
-    private func updateAstronauts(with astronauts: [Astronaut]) {
-        if astronautListVC == nil {
-            astronautListVC = AstronautListViewController(astronauts: astronauts)
-            guard let astronautListVC = astronautListVC else { return }
-
-            addChild(astronautListVC)
-            astronautsContainerView.addSubview(astronautListVC.view)
-            astronautListVC.view.translatesAutoresizingMaskIntoConstraints = false
-            NSLayoutConstraint.activate([
-                astronautListVC.view.topAnchor.constraint(
-                    equalTo: astronautsContainerView.topAnchor),
-                astronautListVC.view.bottomAnchor.constraint(
-                    equalTo: astronautsContainerView.bottomAnchor),
-                astronautListVC.view.leadingAnchor.constraint(
-                    equalTo: astronautsContainerView.leadingAnchor),
-                astronautListVC.view.trailingAnchor.constraint(
-                    equalTo: astronautsContainerView.trailingAnchor),
-            ])
-            astronautListVC.didMove(toParent: self)
-        } else {
-            astronautListVC?.update(with: astronauts)
-        }
-    }
+    // ... (lines 418-442)
 
     private func formatDate(_ dateString: String) -> String {
         let dateFormatter = ISO8601DateFormatter()
         if let date = dateFormatter.date(from: dateString) {
             let displayFormatter = DateFormatter()
             displayFormatter.dateFormat = "MMM d, yyyy 'at' h:mm a"
-            displayFormatter.locale = Locale(identifier: "en_US")
+            let identifier =
+                LocalizationManager.shared.currentLanguage == .turkish ? "tr_TR" : "en_US"
+            displayFormatter.locale = Locale(identifier: identifier)
             return displayFormatter.string(from: date)
         }
-        return "Date TBD"
+        return L10n.detailTbd
     }
 
     private func statusColor(for statusName: String) -> UIColor {
@@ -471,7 +379,6 @@ final class LaunchDetailViewController: UIViewController {
         contentView.addSubview(statusLabel)
         contentView.addSubview(mainStackView)
 
-        actionButtonsStack.addArrangedSubview(favoriteButton)
         actionButtonsStack.addArrangedSubview(notificationButton)
 
         let padding: CGFloat = 16.0
@@ -525,5 +432,75 @@ final class LaunchDetailViewController: UIViewController {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         gradientBackgroundLayer.frame = view.bounds
+    }
+
+    private func setupNavigationBar() {
+        title = L10n.detailTitle
+        navigationController?.navigationBar.tintColor = Colors.accentBlue
+        navigationItem.largeTitleDisplayMode = .never
+        navigationItem.rightBarButtonItems = [shareBarButton, favoriteBarButton]
+    }
+
+    private func bindViewModel() {
+        viewModel.$launchDetail
+            .receive(on: DispatchQueue.main)
+            .compactMap { $0 }
+            .sink { [weak self] detail in
+                self?.updateUIWith(detail)
+            }
+            .store(in: &cancellables)
+
+        viewModel.$isLoading
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] isLoading in
+                if isLoading {
+                    self?.activityIndicator.startAnimating()
+                } else {
+                    self?.activityIndicator.stopAnimating()
+                }
+            }
+            .store(in: &cancellables)
+
+        viewModel.$errorMessage
+            .receive(on: DispatchQueue.main)
+            .compactMap { $0 }
+            .sink { [weak self] message in
+                self?.showErrorAlert(message: message)
+            }
+            .store(in: &cancellables)
+
+        viewModel.$isFavorite
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] isFavorite in
+                self?.updateFavoriteButton(isFavorite: isFavorite)
+            }
+            .store(in: &cancellables)
+
+        viewModel.$isNotificationScheduled
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] isScheduled in
+                self?.updateNotificationButton(isScheduled: isScheduled)
+            }
+            .store(in: &cancellables)
+    }
+
+    private func updateAstronauts(with astronauts: [Astronaut]) {
+        if astronautListVC == nil {
+            astronautListVC = AstronautListViewController(astronauts: astronauts)
+            if let vc = astronautListVC {
+                addChild(vc)
+                astronautsContainerView.addSubview(vc.view)
+                vc.view.translatesAutoresizingMaskIntoConstraints = false
+                NSLayoutConstraint.activate([
+                    vc.view.topAnchor.constraint(equalTo: astronautsContainerView.topAnchor),
+                    vc.view.leadingAnchor.constraint(
+                        equalTo: astronautsContainerView.leadingAnchor),
+                    vc.view.trailingAnchor.constraint(
+                        equalTo: astronautsContainerView.trailingAnchor),
+                    vc.view.bottomAnchor.constraint(equalTo: astronautsContainerView.bottomAnchor),
+                ])
+                vc.didMove(toParent: self)
+            }
+        }
     }
 }

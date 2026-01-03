@@ -164,4 +164,8 @@ final class StatCardView: UIView {
     func addGlow() {
         glassCard.addGlow(color: accentColor, radius: 15)
     }
+
+    func updateTitle(_ title: String) {
+        titleLabel.text = title
+    }
 }

@@ -9,7 +9,7 @@ import Foundation
 import UserNotifications
 
 final class NotificationManager: NSObject {
-    nonisolated(unsafe) static let shared = NotificationManager()
+    static let shared = NotificationManager()
 
     private let notificationCenter = UNUserNotificationCenter.current()
 
@@ -29,7 +29,6 @@ final class NotificationManager: NSObject {
                 if granted {
                     self?.registerCategories()
                 }
-
 
                 completion(granted)
             }

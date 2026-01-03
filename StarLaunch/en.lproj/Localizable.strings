@@ -1,0 +1,145 @@
+/* 
+  Localizable.strings (English)
+  StarLaunch
+
+  Created by Celal Can Sağnak on 3.01.2026.
+*/
+
+// MARK: - Common
+"common.ok" = "OK";
+"common.cancel" = "Cancel";
+"common.error" = "Error";
+"common.loading" = "Loading...";
+"common.retry" = "Retry";
+"common.done" = "Done";
+"common.close" = "Close";
+"common.success" = "Success";
+"common.pullToRefresh" = "Pull to refresh";
+
+// MARK: - Tabs
+"tab.dashboard" = "Dashboard";
+"tab.launches" = "Launches";
+"tab.favorites" = "Favorites";
+"tab.settings" = "Settings";
+
+// MARK: - Splash
+"splash.title" = "StarLaunch";
+"splash.tagline" = "Track every launch, everywhere";
+"splash.loading" = "Preparing for liftoff...";
+"splash.ready" = "Ready to launch!";
+
+// MARK: - Onboarding
+"onboarding.welcome.title" = "Welcome to StarLaunch";
+"onboarding.welcome.description" = "Track upcoming rocket launches from around the world in real-time.";
+"onboarding.countdown.title" = "Live Countdowns";
+"onboarding.countdown.description" = "Watch countdown timers for upcoming launches and never miss a moment.";
+"onboarding.notifications.title" = "Stay Notified";
+"onboarding.notifications.description" = "Get alerts before launches so you can tune in live.";
+"onboarding.favorites.title" = "Save Your Favorites";
+"onboarding.favorites.description" = "Bookmark launches and get personalized notifications.";
+"onboarding.getStarted" = "Get Started";
+"onboarding.skip" = "Skip";
+"onboarding.next" = "Next";
+"onboarding.offline.title" = "Works Offline";
+"onboarding.offline.description" = "Access cached data even without internet. Your space data is always with you.";
+
+// MARK: - Dashboard
+"dashboard.title" = "Dashboard";
+"dashboard.starship" = "Starship Program";
+"dashboard.agencies" = "Featured Agencies";
+"dashboard.stats" = "Launch Statistics";
+"dashboard.totalLaunches" = "Total Launches";
+"dashboard.successRate" = "Success Rate";
+"dashboard.upcoming" = "Upcoming";
+"dashboard.quickActions" = "Quick Actions";
+"dashboard.visitSpacex" = "Visit SpaceX Website";
+
+// MARK: - Launches
+"launches.title" = "Launches";
+"launches.empty.title" = "No Launches Found";
+"launches.empty.message" = "There are no upcoming launches at this time.";
+"launches.search" = "Search launches...";
+"launches.offlineMode" = "Offline Mode";
+
+// MARK: - Launch Detail
+"detail.title" = "Launch Detail";
+"detail.mission" = "Mission";
+"detail.provider" = "Launch Provider";
+"detail.location" = "Location";
+"detail.rocket" = "Rocket";
+"detail.status" = "Status";
+"detail.window" = "Launch Window";
+"detail.astronauts" = "Astronauts";
+"detail.crew" = "Crew";
+"detail.remindMe" = "Remind Me";
+"detail.reminderSet" = "Reminder Set";
+"detail.share" = "Share";
+"detail.countdown" = "Countdown";
+"detail.days" = "Days";
+"detail.hours" = "Hours";
+"detail.minutes" = "Minutes";
+"detail.seconds" = "Seconds";
+"detail.tbd" = "Date TBD";
+"detail.noMission" = "No mission description available.";
+
+// MARK: - Favorites
+"favorites.title" = "Favorites";
+"favorites.empty.title" = "No Favorites Yet";
+"favorites.empty.message" = "Star your favorite launches to see them here.";
+"favorites.browse" = "Browse Launches";
+
+// MARK: - Search
+"search.title" = "Search";
+"search.placeholder" = "Search launches...";
+"search.noResults" = "No results found";
+"search.recent" = "Recent Searches";
+"search.sortBy" = "Sort By";
+"search.resetFilters" = "Reset Filters";
+"search.sort.date" = "Launch Date";
+"search.sort.name" = "Name";
+"search.sort.provider" = "Provider";
+
+// MARK: - Settings
+"settings.title" = "Settings";
+"settings.section.language" = "Language";
+"settings.section.general" = "General";
+"settings.section.legal" = "Legal";
+"settings.section.app" = "App";
+"settings.language" = "Language";
+"settings.onboarding" = "View Onboarding";
+"settings.clearCache" = "Clear Cache";
+"settings.privacyPolicy" = "Privacy Policy";
+"settings.termsOfUse" = "Terms of Use";
+"settings.rateApp" = "Rate App";
+"settings.shareApp" = "Share App";
+"settings.clearCache.message" = "Are you sure you want to clear all cached data?";
+"settings.clearCache.success" = "All cached data has been removed.";
+"settings.selectLanguage" = "Select Language";
+
+// MARK: - Language
+"language.english" = "English";
+"language.turkish" = "Turkish";
+
+// MARK: - Errors
+"error.noInternet" = "No internet connection. Please check your connection and try again.";
+"error.timeout" = "Request timed out. Please try again.";
+"error.server" = "Server error. Please try again later.";
+"error.generic" = "Something went wrong. Please try again.";
+
+// MARK: - Empty States
+"empty.noData.title" = "No Data";
+"empty.noData.message" = "There's nothing to show here yet.";
+"empty.noSearchResults.title" = "No Results";
+"empty.noSearchResults.message" = "Try adjusting your search or filters.";
+"empty.noInternet.title" = "No Internet Connection";
+"empty.error.title" = "Something Went Wrong";
+
+// MARK: - Share
+"share.text" = "Check out this launch on StarLaunch!";
+
+// MARK: - Launch Status
+"launch.status.launchingSoon" = "LAUNCHING SOON";
+"launch.status.goForLaunch" = "GO FOR LAUNCH";
+"launch.status.scheduled" = "SCHEDULED";
+"launch.status.launched" = "LAUNCHED";
+"launch.status.tbd" = "TBD";

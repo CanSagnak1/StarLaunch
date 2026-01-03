@@ -5,11 +5,11 @@
 //  Created by Celal Can Sağnak on 2.01.2026.
 //
 
-import CommonCrypto
+import CryptoKit
 import Foundation
 
 final class CacheManager {
-    nonisolated(unsafe) static let shared = CacheManager()
+    static let shared = CacheManager()
 
     private let memoryCache = NSCache<NSString, CacheEntry>()
     private let fileManager = FileManager.default
@@ -47,11 +47,11 @@ final class CacheManager {
     func cache<T: Encodable>(_ object: T, for key: String, expiration: TimeInterval = 300) {
         guard let data = try? encoder.encode(object) else { return }
 
-        let cacheKey = NSString(string: key.md5Hash)
+        let cacheKey = NSString(string: key.sha256Hash)
         let entry = CacheEntry(data: data, expirationInterval: expiration)
         memoryCache.setObject(entry, forKey: cacheKey)
 
-        let fileURL = cacheDirectory.appendingPathComponent(key.md5Hash)
+        let fileURL = cacheDirectory.appendingPathComponent(key.sha256Hash)
         let metadata = CacheMetadata(timestamp: Date(), expiration: expiration)
         let wrapper = CacheWrapper(data: data, metadata: metadata)
 
@@ -62,13 +62,13 @@ final class CacheManager {
     }
 
     func cached<T: Decodable>(for key: String, as type: T.Type) -> T? {
-        let cacheKey = NSString(string: key.md5Hash)
+        let cacheKey = NSString(string: key.sha256Hash)
 
         if let entry = memoryCache.object(forKey: cacheKey), !entry.isExpired {
             return try? decoder.decode(T.self, from: entry.data)
         }
 
-        let fileURL = cacheDirectory.appendingPathComponent(key.md5Hash)
+        let fileURL = cacheDirectory.appendingPathComponent(key.sha256Hash)
 
         guard let wrapperData = try? Data(contentsOf: fileURL),
             let wrapper = try? decoder.decode(CacheWrapper.self, from: wrapperData),
@@ -80,15 +80,14 @@ final class CacheManager {
         let entry = CacheEntry(data: wrapper.data, expirationInterval: wrapper.metadata.expiration)
         memoryCache.setObject(entry, forKey: cacheKey)
 
-
         return try? decoder.decode(T.self, from: wrapper.data)
     }
 
     func remove(for key: String) {
-        let cacheKey = NSString(string: key.md5Hash)
+        let cacheKey = NSString(string: key.sha256Hash)
         memoryCache.removeObject(forKey: cacheKey)
 
-        let fileURL = cacheDirectory.appendingPathComponent(key.md5Hash)
+        let fileURL = cacheDirectory.appendingPathComponent(key.sha256Hash)
         try? fileManager.removeItem(at: fileURL)
     }
 
@@ -132,14 +131,9 @@ private struct CacheWrapper: Codable {
 }
 
 extension String {
-    var md5Hash: String {
+    var sha256Hash: String {
         let data = Data(self.utf8)
-        var hash = [UInt8](repeating: 0, count: 16)
-
-        _ = data.withUnsafeBytes { buffer in
-            CC_MD5(buffer.baseAddress, CC_LONG(data.count), &hash)
-        }
-
-        return hash.map { String(format: "%02x", $0) }.joined()
+        let hash = SHA256.hash(data: data)
+        return hash.compactMap { String(format: "%02x", $0) }.joined()
     }
 }

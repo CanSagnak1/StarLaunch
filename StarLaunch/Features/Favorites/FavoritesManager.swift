@@ -9,7 +9,7 @@ import Combine
 import Foundation
 
 final class FavoritesManager {
-    nonisolated(unsafe) static let shared = FavoritesManager()
+    static let shared = FavoritesManager()
 
     private let userDefaultsKey = "favorite_launches"
     private let encoder = JSONEncoder()

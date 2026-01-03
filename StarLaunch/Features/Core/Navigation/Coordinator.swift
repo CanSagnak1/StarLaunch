@@ -41,47 +41,33 @@ final class MainCoordinator: Coordinator {
         self.analyticsService = analyticsService
     }
 
+    private var tabBarController: MainTabBarController?
+
     func start() {
-        showDashboard()
+        let tabBarController = MainTabBarController(
+            factory: factory, analyticsService: analyticsService)
+        self.tabBarController = tabBarController
+        navigationController.setViewControllers([tabBarController], animated: false)
+        navigationController.setNavigationBarHidden(true, animated: false)
     }
 
     func showDashboard() {
-        let viewModel = factory.makeDashboardViewModel()
-        let vc = DashboardViewController(viewModel: viewModel, coordinator: self)
-        navigationController.setViewControllers([vc], animated: false)
-        analyticsService.trackScreen("Dashboard")
+        tabBarController?.selectedIndex = 0
     }
 
     func showLaunchList() {
-        let viewModel = factory.makeLaunchListViewModel()
-        let vc = LaunchListViewController(viewModel: viewModel, coordinator: self)
-        navigationController.pushViewController(vc, animated: true)
-        analyticsService.trackScreen("LaunchList")
-    }
-
-    func showLaunchDetail(launchID: String, launchName: String? = nil) {
-        let viewModel = factory.makeLaunchDetailViewModel(launchID: launchID)
-        let vc = LaunchDetailViewController(viewModel: viewModel)
-        navigationController.pushViewController(vc, animated: true)
-        analyticsService.trackScreen("LaunchDetail")
-        analyticsService.trackEvent(
-            "view_launch_detail",
-            parameters: [
-                "launch_id": launchID,
-                "launch_name": launchName ?? "unknown",
-            ])
+        tabBarController?.selectedIndex = 1
     }
 
     func showFavorites() {
-        let vc = FavoritesViewController(coordinator: self)
-        navigationController.pushViewController(vc, animated: true)
-        analyticsService.trackScreen("Favorites")
+        tabBarController?.selectedIndex = 2
+    }
+
+    func showLaunchDetail(launchID: String, launchName: String? = nil) {
+        tabBarController?.showLaunchDetail(launchID: launchID, launchName: launchName)
     }
 
     func showSearch() {
-        let viewModel = factory.makeLaunchListViewModel()
-        let vc = SearchViewController(viewModel: viewModel, coordinator: self)
-        navigationController.pushViewController(vc, animated: true)
-        analyticsService.trackScreen("Search")
+        tabBarController?.showSearch()
     }
 }

@@ -13,6 +13,7 @@ final class DashboardViewController: UIViewController {
     // MARK: - Properties
     private let viewModel: DashboardViewModel
     private weak var coordinator: MainCoordinator?
+    private weak var tabCoordinator: MainTabBarController?
     private var cancellables = Set<AnyCancellable>()
     private var agencyLogos: [UIImage] = []
     private var starshipImages: [UIImage] = []
@@ -200,7 +201,7 @@ final class DashboardViewController: UIViewController {
     private lazy var spaceXButton: UIButton = {
         let button = GradientButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle("  Visit SpaceX Website", for: .normal)
+        button.setTitle("  \(L10n.dashboardVisitSpacex)", for: .normal)
         button.setImage(UIImage(systemName: "safari.fill"), for: .normal)
         button.tintColor = .white
         button.gradientColors = Colors.primaryGradient
@@ -263,6 +264,12 @@ final class DashboardViewController: UIViewController {
         super.init(nibName: nil, bundle: nil)
     }
 
+    init(viewModel: DashboardViewModel, coordinator: MainTabBarController?) {
+        self.viewModel = viewModel
+        self.tabCoordinator = coordinator
+        super.init(nibName: nil, bundle: nil)
+    }
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -280,7 +287,11 @@ final class DashboardViewController: UIViewController {
         setupUI()
         bindViewModel()
 
-        if viewModel.isLoading {
+        // Fetch data if not already loading
+        if viewModel.programInfo == nil && !viewModel.isLoading {
+            activityIndicator.startAnimating()
+            viewModel.fetchStarshipData()
+        } else if viewModel.isLoading {
             activityIndicator.startAnimating()
         }
     }
@@ -383,21 +394,32 @@ final class DashboardViewController: UIViewController {
         HapticManager.shared.navigation()
         if let coordinator = coordinator {
             coordinator.showLaunchList()
+        } else if let tabCoordinator = tabCoordinator {
+            tabCoordinator.showLaunchList()
         } else {
             let viewModel = LaunchListViewModel()
-            let launchListVC = LaunchListViewController(viewModel: viewModel, coordinator: nil)
+            let launchListVC = LaunchListViewController(
+                viewModel: viewModel, coordinator: nil as MainCoordinator?)
             navigationController?.pushViewController(launchListVC, animated: true)
         }
     }
 
     @objc private func navigateToFavorites() {
         HapticManager.shared.navigation()
-        coordinator?.showFavorites()
+        if let coordinator = coordinator {
+            coordinator.showFavorites()
+        } else if let tabCoordinator = tabCoordinator {
+            tabCoordinator.showFavorites()
+        }
     }
 
     @objc private func navigateToSearch() {
         HapticManager.shared.navigation()
-        coordinator?.showSearch()
+        if let coordinator = coordinator {
+            coordinator.showSearch()
+        } else if let tabCoordinator = tabCoordinator {
+            tabCoordinator.showSearch()
+        }
     }
 
     // MARK: - State Handling
@@ -546,8 +568,6 @@ extension DashboardViewController {
         setupCollectionView()
         composeMainStackView()
         activateConstraints()
-
-        setupActionCardGestures()
     }
 
     fileprivate func setupActionCardGestures() {
@@ -580,14 +600,13 @@ extension DashboardViewController {
     fileprivate func composeMainStackView() {
         mainStackView.addArrangedSubview(createHeroSection())
         mainStackView.addArrangedSubview(createStatsSection())
-        mainStackView.addArrangedSubview(createQuickActionsSection())
         mainStackView.addArrangedSubview(createAgenciesSection())
         mainStackView.addArrangedSubview(spaceXButton)
 
         mainStackView.setCustomSpacing(32, after: createAgenciesSection())
 
         let bottomSpacer = UIView()
-        bottomSpacer.heightAnchor.constraint(equalToConstant: 40).isActive = true
+        bottomSpacer.heightAnchor.constraint(equalToConstant: 100).isActive = true
         mainStackView.addArrangedSubview(bottomSpacer)
     }
 
@@ -870,5 +889,21 @@ extension DashboardViewController: UICollectionViewDataSource {
         let logo = agencyLogos[indexPath.item]
         cell.configure(with: logo)
         return cell
+    }
+}
+
+// MARK: - Localization
+extension DashboardViewController {
+    func refreshForLanguageChange() {
+        title = L10n.dashboardTitle
+        totalLaunchCard.updateTitle(L10n.dashboardTotalLaunches.uppercased())
+        successRateCard.updateTitle(L10n.dashboardSuccessRate.uppercased())
+        agenciesHeaderLabel.text = L10n.dashboardAgencies.uppercased()
+        programSubtitleLabel.text = L10n.dashboardStarship.uppercased()
+        statsHeaderLabel.text = L10n.dashboardStats.uppercased()
+
+        // Update quick actions
+        quickActionsLabel.text = L10n.dashboardQuickActions.uppercased()
+        spaceXButton.setTitle("  \(L10n.dashboardVisitSpacex)", for: .normal)
     }
 }

@@ -10,7 +10,7 @@ import Foundation
 import Network
 
 final class NetworkMonitor: ObservableObject {
-    nonisolated(unsafe) static let shared = NetworkMonitor()
+    static let shared = NetworkMonitor()
 
     private let monitor = NWPathMonitor()
     private let queue = DispatchQueue(label: "com.starlaunch.networkmonitor", qos: .utility)

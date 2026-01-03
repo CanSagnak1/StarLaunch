@@ -16,45 +16,55 @@ final class EmptyStateView: UIView {
         let actionTitle: String?
         let action: (() -> Void)?
 
-        static let noData = Configuration(
-            image: UIImage(systemName: "tray"),
-            title: "No Data",
-            message: "There's nothing to show here yet.",
-            actionTitle: nil,
-            action: nil
-        )
+        static var noData: Configuration {
+            Configuration(
+                image: UIImage(systemName: "tray"),
+                title: L10n.emptyNoDataTitle,
+                message: L10n.emptyNoDataMessage,
+                actionTitle: nil,
+                action: nil
+            )
+        }
 
-        static let noInternet = Configuration(
-            image: UIImage(systemName: "wifi.slash"),
-            title: "No Internet Connection",
-            message: "Please check your connection and try again.",
-            actionTitle: "Try Again",
-            action: nil
-        )
+        static var noInternet: Configuration {
+            Configuration(
+                image: UIImage(systemName: "wifi.slash"),
+                title: L10n.emptyNoInternetTitle,
+                message: L10n.errorNoInternet,
+                actionTitle: L10n.retry,
+                action: nil
+            )
+        }
 
-        static let noFavorites = Configuration(
-            image: UIImage(systemName: "star"),
-            title: "No Favorites",
-            message: "Add launches to your favorites to see them here.",
-            actionTitle: "Browse Launches",
-            action: nil
-        )
+        static var noFavorites: Configuration {
+            Configuration(
+                image: UIImage(systemName: "star"),
+                title: L10n.favoritesEmptyTitle,
+                message: L10n.favoritesEmptyMessage,
+                actionTitle: L10n.favoritesBrowse,
+                action: nil
+            )
+        }
 
-        static let noSearchResults = Configuration(
-            image: UIImage(systemName: "magnifyingglass"),
-            title: "No Results",
-            message: "Try adjusting your search or filters.",
-            actionTitle: nil,
-            action: nil
-        )
+        static var noSearchResults: Configuration {
+            Configuration(
+                image: UIImage(systemName: "magnifyingglass"),
+                title: L10n.emptyNoSearchResultsTitle,
+                message: L10n.emptyNoSearchResultsMessage,
+                actionTitle: nil,
+                action: nil
+            )
+        }
 
-        static let error = Configuration(
-            image: UIImage(systemName: "exclamationmark.triangle"),
-            title: "Something Went Wrong",
-            message: "An error occurred. Please try again.",
-            actionTitle: "Retry",
-            action: nil
-        )
+        static var error: Configuration {
+            Configuration(
+                image: UIImage(systemName: "exclamationmark.triangle"),
+                title: L10n.emptyErrorTitle,
+                message: L10n.errorGeneric,
+                actionTitle: L10n.retry,
+                action: nil
+            )
+        }
     }
 
     private let imageView: UIImageView = {
@@ -100,6 +110,7 @@ final class EmptyStateView: UIView {
     }()
 
     private var actionHandler: (() -> Void)?
+    private(set) var currentConfiguration: Configuration?
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -137,6 +148,7 @@ final class EmptyStateView: UIView {
     }
 
     func configure(with config: Configuration) {
+        self.currentConfiguration = config
         imageView.image = config.image
         titleLabel.text = config.title
         messageLabel.text = config.message

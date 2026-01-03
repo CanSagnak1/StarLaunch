@@ -89,10 +89,23 @@ final class DashboardViewModel: ObservableObject {
                     )
 
                 let totalLaunches = launchStatsData.count
-                let successfulLaunches = launchStatsData.results.filter { $0.status.id == 3 }.count
+
+                // Status IDs: 1=Go, 2=TBD, 3=Success, 4=Failure, 5=Hold, 6=In Flight, 7=Partial Failure
+                // For success rate, we count only completed launches (Success=3, Partial Success is sometimes 4)
+                let successfulLaunches = launchStatsData.results.filter {
+                    $0.status.id == 3  // Success
+                }.count
+
+                let failedLaunches = launchStatsData.results.filter {
+                    $0.status.id == 4 || $0.status.id == 7  // Failure or Partial Failure
+                }.count
+
+                // Calculate rate based on completed launches only (success + failed)
+                let completedLaunches = successfulLaunches + failedLaunches
                 let rate =
-                    totalLaunches > 0
-                    ? Int((Double(successfulLaunches) / Double(totalLaunches)) * 100) : 0
+                    completedLaunches > 0
+                    ? Int((Double(successfulLaunches) / Double(completedLaunches)) * 100)
+                    : 0
 
                 self.programInfo = starshipData.upcoming.launches.first?.program.first
                 self.launchCount = totalLaunches

@@ -20,6 +20,14 @@ struct FilterCriteria: Equatable {
         case date = "Launch Date"
         case name = "Name"
         case provider = "Provider"
+
+        var localizedName: String {
+            switch self {
+            case .date: return L10n.searchSortDate
+            case .name: return L10n.searchSortName
+            case .provider: return L10n.searchSortProvider
+            }
+        }
     }
 
     var isEmpty: Bool {

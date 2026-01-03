@@ -9,7 +9,7 @@ import Combine
 import Foundation
 
 final class OfflineDataManager {
-    nonisolated(unsafe) static let shared = OfflineDataManager()
+    static let shared = OfflineDataManager()
 
     private let userDefaults = UserDefaults.standard
     private let encoder = JSONEncoder()

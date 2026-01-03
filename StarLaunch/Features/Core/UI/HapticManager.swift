@@ -9,7 +9,7 @@ import UIKit
 
 final class HapticManager {
 
-    nonisolated(unsafe) static let shared = HapticManager()
+    static let shared = HapticManager()
 
     private let lightImpact = UIImpactFeedbackGenerator(style: .light)
     private let mediumImpact = UIImpactFeedbackGenerator(style: .medium)

@@ -12,6 +12,7 @@ final class LaunchListViewController: UIViewController {
 
     let viewModel: LaunchListViewModel
     private weak var coordinator: MainCoordinator?
+    private weak var tabCoordinator: MainTabBarController?
     var cancellables = Set<AnyCancellable>()
 
     private let gradientBackgroundLayer: CAGradientLayer = {
@@ -118,6 +119,12 @@ final class LaunchListViewController: UIViewController {
         super.init(nibName: nil, bundle: nil)
     }
 
+    init(viewModel: LaunchListViewModel, coordinator: MainTabBarController?) {
+        self.viewModel = viewModel
+        self.tabCoordinator = coordinator
+        super.init(nibName: nil, bundle: nil)
+    }
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -132,6 +139,35 @@ final class LaunchListViewController: UIViewController {
         setupUI()
         bindViewModel()
         viewModel.fetchLaunches()
+
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(refreshForLanguageChange),
+            name: LocalizationManager.languageDidChangeNotification,
+            object: nil
+        )
+        refreshForLanguageChange()
+    }
+
+    // ... lines 144-147 ...
+
+    @objc func refreshForLanguageChange() {
+        title = L10n.launchesTitle
+        refreshControl.attributedTitle = NSAttributedString(
+            string: L10n.commonPullToRefresh,
+            attributes: [.foregroundColor: Colors.subtitleColor]
+        )
+
+        // Update empty state if showing no internet
+        if let config = emptyStateView.currentConfiguration,
+            config.title == L10n.emptyNoInternetTitle || config.title == "No Internet Connection"
+        {  // Check both old and new to be safe or just re-set if needed
+            // Actually better to just let updateEmptyState handle it, or force re-configure.
+            // But updateEmptyState logic depends on viewModel state.
+        }
+        // Ideally we should re-evaluate empty state text.
+        updateEmptyState()
+        tableView.reloadData()
     }
 
     override func viewDidLayoutSubviews() {
@@ -140,7 +176,7 @@ final class LaunchListViewController: UIViewController {
     }
 
     private func setupNavigationBar() {
-        self.title = "Upcoming Launches"
+        self.title = "Launches"
         let appearance = UINavigationBarAppearance()
         appearance.configureWithTransparentBackground()
         appearance.backgroundColor = .clear
@@ -163,7 +199,11 @@ final class LaunchListViewController: UIViewController {
 
     @objc private func showSearch() {
         HapticManager.shared.navigation()
-        coordinator?.showSearch()
+        if let coordinator = coordinator {
+            coordinator.showSearch()
+        } else if let tabCoordinator = tabCoordinator {
+            tabCoordinator.showSearch()
+        }
     }
 
     private func setupUI() {
@@ -210,9 +250,9 @@ final class LaunchListViewController: UIViewController {
         var config = EmptyStateView.Configuration.noInternet
         config = EmptyStateView.Configuration(
             image: UIImage(systemName: "wifi.slash"),
-            title: "No Internet Connection",
-            message: "Please check your connection and try again.",
-            actionTitle: "Retry",
+            title: L10n.emptyNoInternetTitle,
+            message: L10n.errorNoInternet,
+            actionTitle: L10n.retry,
             action: { [weak self] in
                 self?.viewModel.refreshLaunches()
             }
@@ -345,6 +385,9 @@ extension LaunchListViewController: UITableViewDataSource, UITableViewDelegate {
 
         if let coordinator = coordinator {
             coordinator.showLaunchDetail(
+                launchID: selectedLaunch.id, launchName: selectedLaunch.name)
+        } else if let tabCoordinator = tabCoordinator {
+            tabCoordinator.showLaunchDetail(
                 launchID: selectedLaunch.id, launchName: selectedLaunch.name)
         } else {
             let detailViewModel = LaunchDetailViewModel(launchID: selectedLaunch.id)

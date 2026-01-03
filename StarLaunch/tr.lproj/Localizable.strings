@@ -1,0 +1,145 @@
+/* 
+  Localizable.strings (Turkish)
+  StarLaunch
+
+  Created by Celal Can Sağnak on 3.01.2026.
+*/
+
+// MARK: - Common
+"common.ok" = "Tamam";
+"common.cancel" = "İptal";
+"common.error" = "Hata";
+"common.loading" = "Yükleniyor...";
+"common.retry" = "Tekrar Dene";
+"common.done" = "Bitti";
+"common.close" = "Kapat";
+"common.success" = "Başarılı";
+"common.pullToRefresh" = "Yenilemek için çekin";
+
+// MARK: - Tabs
+"tab.dashboard" = "Ana Sayfa";
+"tab.launches" = "Fırlatmalar";
+"tab.favorites" = "Favoriler";
+"tab.settings" = "Ayarlar";
+
+// MARK: - Splash
+"splash.title" = "StarLaunch";
+"splash.tagline" = "Her yerde, her fırlatmayı takip edin";
+"splash.loading" = "Kalkışa hazırlanıyor...";
+"splash.ready" = "Fırlatmaya hazır!";
+
+// MARK: - Onboarding
+"onboarding.welcome.title" = "StarLaunch'a Hoş Geldiniz";
+"onboarding.welcome.description" = "Dünyanın dört bir yanından yaklaşan roket fırlatmalarını gerçek zamanlı takip edin.";
+"onboarding.countdown.title" = "Canlı Geri Sayım";
+"onboarding.countdown.description" = "Yaklaşan fırlatmalar için geri sayım sayacını izleyin ve hiçbir anı kaçırmayın.";
+"onboarding.notifications.title" = "Bildirimlerle Haberdar Olun";
+"onboarding.notifications.description" = "Fırlatmalardan önce uyarılar alın ve canlı yayını izleyin.";
+"onboarding.favorites.title" = "Favorilerinizi Kaydedin";
+"onboarding.favorites.description" = "Fırlatmaları işaretleyin ve kişiselleştirilmiş bildirimler alın.";
+"onboarding.getStarted" = "Başla";
+"onboarding.skip" = "Atla";
+"onboarding.next" = "İleri";
+"onboarding.offline.title" = "Çevrimdışı Çalışır";
+"onboarding.offline.description" = "İnternet olmasa bile önbelleğe alınmış verilere erişin. Uzay verileriniz her zaman yanınızda.";
+
+// MARK: - Dashboard
+"dashboard.title" = "Ana Sayfa";
+"dashboard.starship" = "Starship Programı";
+"dashboard.agencies" = "Öne Çıkan Ajanslar";
+"dashboard.stats" = "Fırlatma İstatistikleri";
+"dashboard.totalLaunches" = "Toplam Fırlatma";
+"dashboard.successRate" = "Başarı Oranı";
+"dashboard.upcoming" = "Yaklaşan";
+"dashboard.quickActions" = "Hızlı İşlemler";
+"dashboard.visitSpacex" = "SpaceX Sitesini Ziyaret Et";
+
+// MARK: - Launches
+"launches.title" = "Fırlatmalar";
+"launches.empty.title" = "Fırlatma Bulunamadı";
+"launches.empty.message" = "Şu anda yaklaşan fırlatma bulunmuyor.";
+"launches.search" = "Fırlatma ara...";
+"launches.offlineMode" = "Çevrimdışı Mod";
+
+// MARK: - Launch Detail
+"detail.title" = "Fırlatma Detayı";
+"detail.mission" = "Görev";
+"detail.provider" = "Fırlatma Sağlayıcısı";
+"detail.location" = "Konum";
+"detail.rocket" = "Roket";
+"detail.status" = "Durum";
+"detail.window" = "Fırlatma Penceresi";
+"detail.astronauts" = "Astronotlar";
+"detail.crew" = "Mürettebat";
+"detail.remindMe" = "Hatırlat";
+"detail.reminderSet" = "Hatırlatıcı Ayarlandı";
+"detail.share" = "Paylaş";
+"detail.countdown" = "Geri Sayım";
+"detail.days" = "Gün";
+"detail.hours" = "Saat";
+"detail.minutes" = "Dakika";
+"detail.seconds" = "Saniye";
+"detail.tbd" = "Tarih Belirlenmedi";
+"detail.noMission" = "Görev açıklaması mevcut değil.";
+
+// MARK: - Favorites
+"favorites.title" = "Favoriler";
+"favorites.empty.title" = "Henüz Favori Yok";
+"favorites.empty.message" = "Favori fırlatmalarınızı burada görmek için yıldızlayın.";
+"favorites.browse" = "Fırlatmalara Göz At";
+
+// MARK: - Search
+"search.title" = "Ara";
+"search.placeholder" = "Fırlatma ara...";
+"search.noResults" = "Sonuç bulunamadı";
+"search.recent" = "Son Aramalar";
+"search.sortBy" = "Sırala";
+"search.resetFilters" = "Filtreleri Sıfırla";
+"search.sort.date" = "Fırlatma Tarihi";
+"search.sort.name" = "İsim";
+"search.sort.provider" = "Sağlayıcı";
+
+// MARK: - Settings
+"settings.title" = "Ayarlar";
+"settings.section.language" = "Dil";
+"settings.section.general" = "Genel";
+"settings.section.legal" = "Yasal";
+"settings.section.app" = "Uygulama";
+"settings.language" = "Dil";
+"settings.onboarding" = "Tanıtımı Görüntüle";
+"settings.clearCache" = "Önbelleği Temizle";
+"settings.privacyPolicy" = "Gizlilik Politikası";
+"settings.termsOfUse" = "Kullanım Şartları";
+"settings.rateApp" = "Uygulamayı Puanla";
+"settings.shareApp" = "Uygulamayı Paylaş";
+"settings.clearCache.message" = "Tüm önbelleğe alınmış verileri silmek istediğinizden emin misiniz?";
+"settings.clearCache.success" = "Tüm önbellek verileri temizlendi.";
+"settings.selectLanguage" = "Dil Seçin";
+
+// MARK: - Language
+"language.english" = "İngilizce";
+"language.turkish" = "Türkçe";
+
+// MARK: - Errors
+"error.noInternet" = "İnternet bağlantısı yok. Bağlantınızı kontrol edip tekrar deneyin.";
+"error.timeout" = "İstek zaman aşımına uğradı. Lütfen tekrar deneyin.";
+"error.server" = "Sunucu hatası. Lütfen daha sonra tekrar deneyin.";
+"error.generic" = "Bir şeyler ters gitti. Lütfen tekrar deneyin.";
+
+// MARK: - Empty States
+"empty.noData.title" = "Veri Yok";
+"empty.noData.message" = "Henüz burada gösterilecek bir şey yok.";
+"empty.noSearchResults.title" = "Sonuç Bulunamadı";
+"empty.noSearchResults.message" = "Aramanızı veya filtrelerinizi değiştirmeyi deneyin.";
+"empty.noInternet.title" = "İnternet Bağlantısı Yok";
+"empty.error.title" = "Bir Şeyler Ters Gitti";
+
+// MARK: - Share
+"share.text" = "StarLaunch'ta bu fırlatmaya göz atın!";
+
+// MARK: - Launch Status
+"launch.status.launchingSoon" = "FIRLATILIYOR";
+"launch.status.goForLaunch" = "FIRLATMAYA HAZIR";
+"launch.status.scheduled" = "PLANLANDI";
+"launch.status.launched" = "FIRLATILDI";
+"launch.status.tbd" = "BELİRSİZ";

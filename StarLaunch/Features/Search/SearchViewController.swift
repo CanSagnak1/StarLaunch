@@ -12,6 +12,7 @@ final class SearchViewController: UIViewController {
 
     private let viewModel: LaunchListViewModel
     private weak var coordinator: MainCoordinator?
+    private weak var tabCoordinator: MainTabBarController?
     private var cancellables = Set<AnyCancellable>()
 
     private let gradientBackgroundLayer: CAGradientLayer = {
@@ -86,6 +87,12 @@ final class SearchViewController: UIViewController {
         super.init(nibName: nil, bundle: nil)
     }
 
+    init(viewModel: LaunchListViewModel, coordinator: MainTabBarController?) {
+        self.viewModel = viewModel
+        self.tabCoordinator = coordinator
+        super.init(nibName: nil, bundle: nil)
+    }
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -100,10 +107,63 @@ final class SearchViewController: UIViewController {
         setupUI()
         bindViewModel()
         viewModel.fetchLaunches()
+
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(refreshForLanguageChange),
+            name: LocalizationManager.languageDidChangeNotification,
+            object: nil
+        )
+        refreshForLanguageChange()
+    }
+
+    @objc private func refreshForLanguageChange() {
+        title = L10n.searchTitle
+        searchController.searchBar.placeholder = L10n.searchPlaceholder
+
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithTransparentBackground()
+        appearance.backgroundColor = .clear
+        appearance.titleTextAttributes = [.foregroundColor: UIColor.white]
+        appearance.largeTitleTextAttributes = [.foregroundColor: UIColor.white]
+
+        navigationController?.navigationBar.standardAppearance = appearance
+        navigationController?.navigationBar.scrollEdgeAppearance = appearance
+
+        // Refresh table view to update any localized content in cells if needed
+        tableView.reloadData()
+
+        // Refresh empty state if visible
+        if !tableView.isHidden {
+            // If we are showing data, we don't do anything for empty state
+        } else {
+            // If searching and empty
+            let isSearching = !searchController.searchBar.text.isNilOrEmpty
+            if isSearching && viewModel.filteredLaunches.isEmpty {
+                emptyStateView.configure(with: .noSearchResults)
+            }
+        }
+    }
+
+    private func bindViewModel() {
+        viewModel.$filteredLaunches
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                self?.tableView.reloadData()
+                self?.refreshForLanguageChange()
+            }
+            .store(in: &cancellables)
+
+        viewModel.$errorMessage
+            .receive(on: DispatchQueue.main)
+            .compactMap { $0 }
+            .sink { [weak self] message in
+                // Handle error if needed
+            }
+            .store(in: &cancellables)
     }
 
     private func setupUI() {
-        title = "Search"
         view.backgroundColor = Colors.appBackground
         view.layer.insertSublayer(gradientBackgroundLayer, at: 0)
 
@@ -144,45 +204,16 @@ final class SearchViewController: UIViewController {
         ])
     }
 
-    private func bindViewModel() {
-        viewModel.$filteredLaunches
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] launches in
-                self?.tableView.reloadData()
-                self?.updateEmptyState(
-                    isEmpty: launches.isEmpty && !(self?.viewModel.isLoading ?? false))
-            }
-            .store(in: &cancellables)
-
-        viewModel.$isSearching
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] isSearching in
-                self?.updateFilterButtonBadge()
-            }
-            .store(in: &cancellables)
-    }
-
-    private func updateEmptyState(isEmpty: Bool) {
-        let isSearching = !searchController.searchBar.text.isNilOrEmpty
-        tableView.isHidden = isEmpty && isSearching
-        emptyStateView.isHidden = !(isEmpty && isSearching)
-    }
-
-    private func updateFilterButtonBadge() {
-        let count = viewModel.activeFiltersCount
-        if count > 0 {
-            filterButton.image = UIImage(systemName: "line.3.horizontal.decrease.circle.fill")
-        } else {
-            filterButton.image = UIImage(systemName: "line.3.horizontal.decrease.circle")
-        }
-    }
+    // ... lines 154-186
 
     @objc private func showFilters() {
         HapticManager.shared.buttonTap()
-        let alert = UIAlertController(title: "Sort By", message: nil, preferredStyle: .actionSheet)
+        let alert = UIAlertController(
+            title: L10n.searchSortBy, message: nil, preferredStyle: .actionSheet)
 
         for option in FilterCriteria.SortOption.allCases {
-            let action = UIAlertAction(title: option.rawValue, style: .default) { [weak self] _ in
+            let action = UIAlertAction(title: option.localizedName, style: .default) {
+                [weak self] _ in
                 HapticManager.shared.selectionChanged()
                 self?.viewModel.sortBy(option)
             }
@@ -194,13 +225,14 @@ final class SearchViewController: UIViewController {
 
         if viewModel.activeFiltersCount > 0 {
             alert.addAction(
-                UIAlertAction(title: "Reset Filters", style: .destructive) { [weak self] _ in
+                UIAlertAction(title: L10n.searchResetFilters, style: .destructive) {
+                    [weak self] _ in
                     HapticManager.shared.warning()
                     self?.viewModel.resetFilters()
                 })
         }
 
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        alert.addAction(UIAlertAction(title: L10n.cancel, style: .cancel))
 
         if let popover = alert.popoverPresentationController {
             popover.barButtonItem = filterButton
@@ -238,7 +270,11 @@ extension SearchViewController: UITableViewDataSource, UITableViewDelegate {
         HapticManager.shared.navigation()
         tableView.deselectRow(at: indexPath, animated: true)
         let launch = viewModel.filteredLaunches[indexPath.row]
-        coordinator?.showLaunchDetail(launchID: launch.id, launchName: launch.name)
+        if let coordinator = coordinator {
+            coordinator.showLaunchDetail(launchID: launch.id, launchName: launch.name)
+        } else if let tabCoordinator = tabCoordinator {
+            tabCoordinator.showLaunchDetail(launchID: launch.id, launchName: launch.name)
+        }
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {

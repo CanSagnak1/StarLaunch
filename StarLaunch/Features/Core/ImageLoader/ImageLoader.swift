@@ -9,7 +9,7 @@ import UIKit
 
 final class ImageLoader {
 
-    nonisolated(unsafe) static let shared = ImageLoader()
+    static let shared = ImageLoader()
 
     private let memoryCache = NSCache<NSString, UIImage>()
     private let diskCache: URLCache

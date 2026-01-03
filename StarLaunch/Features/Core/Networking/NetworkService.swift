@@ -14,7 +14,7 @@ protocol NetworkServiceProtocol {
 }
 
 final class NetworkService: NetworkServiceProtocol {
-    nonisolated(unsafe) static let shared = NetworkService()
+    static let shared = NetworkService()
 
     private let session: URLSession
     private let decoder: JSONDecoder
@@ -36,10 +36,6 @@ final class NetworkService: NetworkServiceProtocol {
     }
 
     func fetch<T: Decodable>(from urlString: String, as type: T.Type) async throws -> T {
-        guard networkMonitor.isConnected else {
-            throw NetworkError.noInternetConnection
-        }
-
         guard let url = URL(string: urlString) else {
             throw NetworkError.invalidURL
         }
@@ -47,14 +43,12 @@ final class NetworkService: NetworkServiceProtocol {
         var request = URLRequest(url: url)
         request.cachePolicy = .reloadRevalidatingCacheData
 
-
         do {
             let (data, response) = try await session.data(for: request)
 
             guard let httpResponse = response as? HTTPURLResponse else {
                 throw NetworkError.invalidResponse
             }
-
 
             if httpResponse.statusCode == 429 {
                 let retryAfter = httpResponse.value(forHTTPHeaderField: "Retry-After")
@@ -103,7 +97,6 @@ final class NetworkService: NetworkServiceProtocol {
                 return try await fetch(from: urlString, as: type)
             } catch let error as NetworkError {
                 lastError = error
-
 
                 guard policy.shouldRetry(for: error, attempt: attempt) else {
                     throw error

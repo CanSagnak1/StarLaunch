@@ -253,25 +253,25 @@ final class LaunchCell: UITableViewCell {
                 let hoursUntilLaunch = diff / 3600
 
                 if hoursUntilLaunch < 24 {
-                    statusLabel.text = "LAUNCHING SOON"
+                    statusLabel.text = L10n.launchStatusLaunchingSoon
                     statusLabel.textColor = Colors.success
                     statusBadge.backgroundColor = Colors.success.withAlphaComponent(0.15)
                 } else if hoursUntilLaunch < 72 {
-                    statusLabel.text = "GO FOR LAUNCH"
+                    statusLabel.text = L10n.launchStatusGoForLaunch
                     statusLabel.textColor = Colors.success
                     statusBadge.backgroundColor = Colors.success.withAlphaComponent(0.15)
                 } else {
-                    statusLabel.text = "SCHEDULED"
+                    statusLabel.text = L10n.launchStatusScheduled
                     statusLabel.textColor = Colors.accentBlue
                     statusBadge.backgroundColor = Colors.accentBlue.withAlphaComponent(0.15)
                 }
             } else {
-                statusLabel.text = "LAUNCHED"
+                statusLabel.text = L10n.launchStatusLaunched
                 statusLabel.textColor = Colors.subtitleColor
                 statusBadge.backgroundColor = Colors.subtitleColor.withAlphaComponent(0.1)
             }
         } else {
-            statusLabel.text = "TBD"
+            statusLabel.text = L10n.launchStatusTbd
             statusLabel.textColor = Colors.warning
             statusBadge.backgroundColor = Colors.warning.withAlphaComponent(0.15)
         }

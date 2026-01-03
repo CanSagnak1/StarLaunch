@@ -155,4 +155,8 @@ final class InfoRowView: UIView {
     public func highlightValue(color: UIColor = Colors.success) {
         valueLabel.textColor = color
     }
+
+    public func updateTitle(_ newTitle: String) {
+        titleLabel.text = newTitle
+    }
 }

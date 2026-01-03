@@ -25,7 +25,7 @@ extension AnalyticsServiceProtocol {
 }
 
 final class AnalyticsService: AnalyticsServiceProtocol {
-    nonisolated(unsafe) static let shared = AnalyticsService()
+    static let shared = AnalyticsService()
 
     private var userProperties: [String: String] = [:]
     private let queue = DispatchQueue(label: "com.starlaunch.analytics", qos: .utility)
@@ -62,7 +62,6 @@ final class AnalyticsService: AnalyticsServiceProtocol {
             } else {
                 self?.userProperties.removeValue(forKey: name)
             }
-
 
             // Analytics.setUserProperty(value, forName: name)
         }

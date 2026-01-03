@@ -11,6 +11,7 @@ import UIKit
 final class FavoritesViewController: UIViewController {
 
     private weak var coordinator: MainCoordinator?
+    private weak var tabCoordinator: MainTabBarController?
     private let favoritesManager = FavoritesManager.shared
     private var cancellables = Set<AnyCancellable>()
 
@@ -60,6 +61,11 @@ final class FavoritesViewController: UIViewController {
         super.init(nibName: nil, bundle: nil)
     }
 
+    init(coordinator: MainTabBarController?) {
+        self.tabCoordinator = coordinator
+        super.init(nibName: nil, bundle: nil)
+    }
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -73,23 +79,20 @@ final class FavoritesViewController: UIViewController {
         super.viewDidLoad()
         setupUI()
         bindFavorites()
+
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(refreshForLanguageChange),
+            name: LocalizationManager.languageDidChangeNotification,
+            object: nil
+        )
+        refreshForLanguageChange()
     }
 
     private func setupUI() {
-        title = "Favorites"
+        title = L10n.favoritesTitle
         view.backgroundColor = Colors.appBackground
         view.layer.insertSublayer(gradientBackgroundLayer, at: 0)
-
-        let appearance = UINavigationBarAppearance()
-        appearance.configureWithTransparentBackground()
-        appearance.backgroundColor = .clear
-        appearance.titleTextAttributes = [.foregroundColor: UIColor.white]
-        appearance.largeTitleTextAttributes = [.foregroundColor: UIColor.white]
-
-        navigationController?.navigationBar.standardAppearance = appearance
-        navigationController?.navigationBar.scrollEdgeAppearance = appearance
-        navigationController?.navigationBar.prefersLargeTitles = true
-        navigationController?.navigationBar.tintColor = .white
 
         view.addSubview(starsOverlayView)
         view.addSubview(tableView)
@@ -115,15 +118,41 @@ final class FavoritesViewController: UIViewController {
         var config = EmptyStateView.Configuration.noFavorites
         config = EmptyStateView.Configuration(
             image: UIImage(systemName: "star"),
-            title: "No Favorites",
-            message: "Add launches to your favorites to see them here.",
-            actionTitle: "Browse Launches",
+            title: L10n.favoritesEmptyTitle,
+            message: L10n.favoritesEmptyMessage,
+            actionTitle: L10n.favoritesBrowse,
             action: { [weak self] in
                 HapticManager.shared.buttonTap()
-                self?.coordinator?.showLaunchList()
+                if let coordinator = self?.coordinator {
+                    coordinator.showLaunchList()
+                } else if let tabCoordinator = self?.tabCoordinator {
+                    tabCoordinator.showLaunchList()
+                }
             }
         )
         emptyStateView.configure(with: config)
+    }
+
+    // ... lines 139-228 ...
+
+    @objc func refreshForLanguageChange() {
+        title = L10n.favoritesTitle
+        emptyStateView.configure(
+            with: EmptyStateView.Configuration(
+                image: UIImage(systemName: "star"),
+                title: L10n.favoritesEmptyTitle,
+                message: L10n.favoritesEmptyMessage,
+                actionTitle: L10n.favoritesBrowse,
+                action: { [weak self] in
+                    HapticManager.shared.buttonTap()
+                    if let coordinator = self?.coordinator {
+                        coordinator.showLaunchList()
+                    } else if let tabCoordinator = self?.tabCoordinator {
+                        tabCoordinator.showLaunchList()
+                    }
+                }
+            ))
+        tableView.reloadData()
     }
 
     private func bindFavorites() {
@@ -163,7 +192,11 @@ extension FavoritesViewController: UITableViewDataSource, UITableViewDelegate {
         HapticManager.shared.navigation()
         tableView.deselectRow(at: indexPath, animated: true)
         let launch = favoritesManager.favoriteLaunches[indexPath.row]
-        coordinator?.showLaunchDetail(launchID: launch.id, launchName: launch.name)
+        if let coordinator = coordinator {
+            coordinator.showLaunchDetail(launchID: launch.id, launchName: launch.name)
+        } else if let tabCoordinator = tabCoordinator {
+            tabCoordinator.showLaunchDetail(launchID: launch.id, launchName: launch.name)
+        }
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
