@@ -53,6 +53,31 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             name: .openLaunchDetail,
             object: nil
         )
+
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleLanguageChange),
+            name: LocalizationManager.languageDidChangeNotification,
+            object: nil
+        )
+    }
+
+    @objc private func handleLanguageChange() {
+        guard let window = window else { return }
+
+        TranslationService.shared.clearCache()
+
+        let splashVC = SplashViewController()
+
+        UIView.transition(
+            with: window,
+            duration: 0.5,
+            options: .transitionCrossDissolve,
+            animations: {
+                window.rootViewController = splashVC
+            },
+            completion: nil
+        )
     }
 
     @objc private func handleOpenLaunchDetail(_ notification: Notification) {

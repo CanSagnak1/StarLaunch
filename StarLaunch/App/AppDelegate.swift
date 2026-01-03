@@ -40,7 +40,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
     }
 
-    // MARK: UISceneSession Lifecycle
 
     func application(
         _ application: UIApplication,
@@ -56,7 +55,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     ) {
     }
 
-    // MARK: - Remote Notifications (for future use)
 
     func application(
         _ application: UIApplication,

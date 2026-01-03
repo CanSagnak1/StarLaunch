@@ -133,7 +133,6 @@ final class FavoritesViewController: UIViewController {
         emptyStateView.configure(with: config)
     }
 
-    // ... lines 139-228 ...
 
     @objc func refreshForLanguageChange() {
         title = L10n.favoritesTitle

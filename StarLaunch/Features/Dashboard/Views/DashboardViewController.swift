@@ -10,7 +10,6 @@ import UIKit
 
 final class DashboardViewController: UIViewController {
 
-    // MARK: - Properties
     private let viewModel: DashboardViewModel
     private weak var coordinator: MainCoordinator?
     private weak var tabCoordinator: MainTabBarController?
@@ -20,7 +19,6 @@ final class DashboardViewController: UIViewController {
     private var currentStarshipIndex = 0
     private var starshipAnimationTimer: Timer?
 
-    // MARK: - UI Components
 
     private let gradientBackgroundLayer: CAGradientLayer = {
         let layer = CAGradientLayer()
@@ -62,7 +60,6 @@ final class DashboardViewController: UIViewController {
         return stackView
     }()
 
-    // MARK: - Hero Section
 
     private let heroContainer: UIView = {
         let view = UIView()
@@ -127,7 +124,6 @@ final class DashboardViewController: UIViewController {
         return label
     }()
 
-    // MARK: - Stats Section
 
     private let statsHeaderLabel: UILabel = {
         let label = UILabel()
@@ -151,7 +147,6 @@ final class DashboardViewController: UIViewController {
         accentColor: Colors.success
     )
 
-    // MARK: - Quick Actions Section
 
     private let quickActionsLabel: UILabel = {
         let label = UILabel()
@@ -183,7 +178,6 @@ final class DashboardViewController: UIViewController {
         gradient: [Colors.accentCyan.cgColor, Colors.accentBlue.cgColor]
     )
 
-    // MARK: - Agencies Section
 
     private let agenciesHeaderLabel: UILabel = {
         let label = UILabel()
@@ -196,7 +190,6 @@ final class DashboardViewController: UIViewController {
 
     private var agenciesCollectionView: UICollectionView!
 
-    // MARK: - SpaceX Button
 
     private lazy var spaceXButton: UIButton = {
         let button = GradientButton()
@@ -209,7 +202,6 @@ final class DashboardViewController: UIViewController {
         return button
     }()
 
-    // MARK: - Offline Banner
 
     private let offlineBanner: UIView = {
         let view = UIView()
@@ -256,7 +248,6 @@ final class DashboardViewController: UIViewController {
 
     private let errorView = ErrorView()
 
-    // MARK: - Init
 
     init(viewModel: DashboardViewModel, coordinator: MainCoordinator? = nil) {
         self.viewModel = viewModel
@@ -280,14 +271,12 @@ final class DashboardViewController: UIViewController {
         cancellables.removeAll()
     }
 
-    // MARK: - Lifecycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
         bindViewModel()
 
-        // Fetch data if not already loading
         if viewModel.programInfo == nil && !viewModel.isLoading {
             activityIndicator.startAnimating()
             viewModel.fetchStarshipData()
@@ -316,7 +305,6 @@ final class DashboardViewController: UIViewController {
         starshipAnimationTimer = nil
     }
 
-    // MARK: - ViewModel Binding
 
     private func bindViewModel() {
         viewModel.$programInfo
@@ -326,6 +314,20 @@ final class DashboardViewController: UIViewController {
                 self.programTitleLabel.text = program.name
                 self.descriptionLabel.text = program.description
                 self.handleLoadingState(isFinished: true)
+
+                if LocalizationManager.shared.currentLanguage != .english {
+                    Task {
+                        let langCode = LocalizationManager.shared.currentLanguage.code
+                        let translatedDesc = await TranslationService.shared.translate(
+                            program.description, to: langCode)
+                        let translatedName = await TranslationService.shared.translate(
+                            program.name, to: langCode)
+                        await MainActor.run {
+                            self.descriptionLabel.text = translatedDesc
+                            self.programTitleLabel.text = translatedName
+                        }
+                    }
+                }
             }
             .store(in: &cancellables)
 
@@ -377,7 +379,6 @@ final class DashboardViewController: UIViewController {
             .store(in: &cancellables)
     }
 
-    // MARK: - Actions
 
     @objc private func openSpaceXPage() {
         HapticManager.shared.buttonTap()
@@ -422,7 +423,6 @@ final class DashboardViewController: UIViewController {
         }
     }
 
-    // MARK: - State Handling
 
     private func handleLoadingState(isFinished: Bool, error: String? = nil) {
         activityIndicator.stopAnimating()
@@ -462,7 +462,6 @@ final class DashboardViewController: UIViewController {
         errorView.show(in: view, at: .bottom)
     }
 
-    // MARK: - Image Loading
 
     private func fetchAgencyLogos(from agencies: [Agency]) {
         Task {
@@ -531,7 +530,6 @@ final class DashboardViewController: UIViewController {
     }
 }
 
-// MARK: - UI Setup
 
 extension DashboardViewController {
 
@@ -644,7 +642,6 @@ extension DashboardViewController {
         ])
     }
 
-    // MARK: - Section Builders
 
     fileprivate func createHeroSection() -> UIView {
         let container = UIView()
@@ -663,7 +660,6 @@ extension DashboardViewController {
 
         container.addSubview(descriptionLabel)
 
-        // Shadow for hero
         heroImageView.layer.shadowColor = Colors.accentPurple.cgColor
         heroImageView.layer.shadowOffset = CGSize(width: 0, height: 8)
         heroImageView.layer.shadowRadius = 24
@@ -791,7 +787,6 @@ extension DashboardViewController {
         return container
     }
 
-    // MARK: - Component Factory
 
     fileprivate func createActionCard(
         title: String, subtitle: String, iconName: String, gradient: [CGColor]
@@ -850,7 +845,6 @@ extension DashboardViewController {
             titleLabel.trailingAnchor.constraint(equalTo: card.trailingAnchor, constant: -8),
         ])
 
-        // Store gradient for later use
         card.tag = 1001
         DispatchQueue.main.async {
             gradientLayer.frame = card.bounds
@@ -866,7 +860,6 @@ extension DashboardViewController {
     }
 }
 
-// MARK: - UICollectionViewDataSource
 
 extension DashboardViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int)
@@ -892,7 +885,6 @@ extension DashboardViewController: UICollectionViewDataSource {
     }
 }
 
-// MARK: - Localization
 extension DashboardViewController {
     func refreshForLanguageChange() {
         title = L10n.dashboardTitle
@@ -902,7 +894,6 @@ extension DashboardViewController {
         programSubtitleLabel.text = L10n.dashboardStarship.uppercased()
         statsHeaderLabel.text = L10n.dashboardStats.uppercased()
 
-        // Update quick actions
         quickActionsLabel.text = L10n.dashboardQuickActions.uppercased()
         spaceXButton.setTitle("  \(L10n.dashboardVisitSpacex)", for: .normal)
     }

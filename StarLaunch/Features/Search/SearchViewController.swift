@@ -130,14 +130,10 @@ final class SearchViewController: UIViewController {
         navigationController?.navigationBar.standardAppearance = appearance
         navigationController?.navigationBar.scrollEdgeAppearance = appearance
 
-        // Refresh table view to update any localized content in cells if needed
         tableView.reloadData()
 
-        // Refresh empty state if visible
         if !tableView.isHidden {
-            // If we are showing data, we don't do anything for empty state
         } else {
-            // If searching and empty
             let isSearching = !searchController.searchBar.text.isNilOrEmpty
             if isSearching && viewModel.filteredLaunches.isEmpty {
                 emptyStateView.configure(with: .noSearchResults)
@@ -158,7 +154,6 @@ final class SearchViewController: UIViewController {
             .receive(on: DispatchQueue.main)
             .compactMap { $0 }
             .sink { [weak self] message in
-                // Handle error if needed
             }
             .store(in: &cancellables)
     }
@@ -204,7 +199,6 @@ final class SearchViewController: UIViewController {
         ])
     }
 
-    // ... lines 154-186
 
     @objc private func showFilters() {
         HapticManager.shared.buttonTap()

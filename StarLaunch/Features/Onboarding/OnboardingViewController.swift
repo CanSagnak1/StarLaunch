@@ -9,7 +9,6 @@ import UIKit
 
 final class OnboardingViewController: UIViewController {
 
-    // MARK: - Properties
     var onComplete: (() -> Void)?
 
     private var currentPage = 0
@@ -89,7 +88,6 @@ final class OnboardingViewController: UIViewController {
         return pc
     }()
 
-    // ... (lines 54-79)
 
     private lazy var skipButton: UIButton = {
         let button = UIButton(type: .system)
@@ -101,7 +99,6 @@ final class OnboardingViewController: UIViewController {
         return button
     }()
 
-    // ... (lines 87-108)
 
     private lazy var nextButton: GradientButton = {
         let button = GradientButton()
@@ -113,7 +110,6 @@ final class OnboardingViewController: UIViewController {
         return button
     }()
 
-    // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
@@ -125,7 +121,6 @@ final class OnboardingViewController: UIViewController {
         gradientBackgroundLayer.frame = view.bounds
     }
 
-    // MARK: - Setup
     private func setupUI() {
         view.layer.insertSublayer(gradientBackgroundLayer, at: 0)
 
@@ -182,7 +177,6 @@ final class OnboardingViewController: UIViewController {
         return vc
     }
 
-    // MARK: - Actions
     @objc private func skipTapped() {
         HapticManager.shared.buttonTap()
         completeOnboarding()
@@ -238,7 +232,6 @@ final class OnboardingViewController: UIViewController {
     }
 }
 
-// MARK: - UIPageViewControllerDataSource
 extension OnboardingViewController: UIPageViewControllerDataSource {
     func pageViewController(
         _ pageViewController: UIPageViewController,
@@ -261,7 +254,6 @@ extension OnboardingViewController: UIPageViewControllerDataSource {
     }
 }
 
-// MARK: - UIPageViewControllerDelegate
 extension OnboardingViewController: UIPageViewControllerDelegate {
     func pageViewController(
         _ pageViewController: UIPageViewController,
@@ -279,7 +271,6 @@ extension OnboardingViewController: UIPageViewControllerDelegate {
     }
 }
 
-// MARK: - OnboardingPage Model
 struct OnboardingPage {
     let icon: String
     let iconColor: UIColor
@@ -287,7 +278,6 @@ struct OnboardingPage {
     let description: String
 }
 
-// MARK: - OnboardingPageContentViewController
 final class OnboardingPageContentViewController: UIViewController {
 
     let pageIndex: Int
@@ -384,7 +374,6 @@ final class OnboardingPageContentViewController: UIViewController {
         titleLabel.text = page.title
         descriptionLabel.text = page.description
 
-        // Add subtle glow to icon container
         iconContainerView.layer.shadowColor = page.iconColor.cgColor
         iconContainerView.layer.shadowOffset = .zero
         iconContainerView.layer.shadowRadius = 20

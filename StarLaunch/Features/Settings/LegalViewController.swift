@@ -31,10 +31,8 @@ enum LegalDocumentType {
 
 final class LegalViewController: UIViewController {
 
-    // MARK: - Properties
     private let documentType: LegalDocumentType
 
-    // MARK: - UI Components
     private let gradientBackgroundLayer: CAGradientLayer = {
         let layer = CAGradientLayer()
         layer.colors = [
@@ -66,7 +64,6 @@ final class LegalViewController: UIViewController {
         return indicator
     }()
 
-    // MARK: - Initialization
     init(type: LegalDocumentType) {
         self.documentType = type
         super.init(nibName: nil, bundle: nil)
@@ -76,7 +73,6 @@ final class LegalViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
-    // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
@@ -88,7 +84,6 @@ final class LegalViewController: UIViewController {
         gradientBackgroundLayer.frame = view.bounds
     }
 
-    // MARK: - Setup
     private func setupUI() {
         title = documentType.title
         view.backgroundColor = Colors.appBackground
@@ -116,7 +111,6 @@ final class LegalViewController: UIViewController {
     }
 }
 
-// MARK: - WKNavigationDelegate
 extension LegalViewController: WKNavigationDelegate {
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         activityIndicator.stopAnimating()
@@ -127,7 +121,6 @@ extension LegalViewController: WKNavigationDelegate {
     }
 }
 
-// MARK: - HTML Content
 private let privacyPolicyHTML = """
     <!DOCTYPE html>
     <html>

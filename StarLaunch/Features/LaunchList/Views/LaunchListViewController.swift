@@ -149,7 +149,6 @@ final class LaunchListViewController: UIViewController {
         refreshForLanguageChange()
     }
 
-    // ... lines 144-147 ...
 
     @objc func refreshForLanguageChange() {
         title = L10n.launchesTitle
@@ -158,14 +157,10 @@ final class LaunchListViewController: UIViewController {
             attributes: [.foregroundColor: Colors.subtitleColor]
         )
 
-        // Update empty state if showing no internet
         if let config = emptyStateView.currentConfiguration,
             config.title == L10n.emptyNoInternetTitle || config.title == "No Internet Connection"
         {  // Check both old and new to be safe or just re-set if needed
-            // Actually better to just let updateEmptyState handle it, or force re-configure.
-            // But updateEmptyState logic depends on viewModel state.
         }
-        // Ideally we should re-evaluate empty state text.
         updateEmptyState()
         tableView.reloadData()
     }

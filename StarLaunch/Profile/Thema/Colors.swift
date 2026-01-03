@@ -9,46 +9,38 @@ import UIKit
 
 enum Colors {
 
-    // MARK: - Primary Colors
     static let appBackground = UIColor(hex: "#0A0F1C")
     static let cardBackground = UIColor(hex: "#111827")
     static let cardBackgroundLight = UIColor(hex: "#1F2937")
 
-    // MARK: - Button Colors
     static let buttonBackground = UIColor(hex: "#1F2937")
     static let buttonBackgroundHighlight = UIColor(hex: "#374151")
     static let buttonPrimary = UIColor(hex: "#6366F1")
     static let buttonPrimaryHighlight = UIColor(hex: "#818CF8")
 
-    // MARK: - Text Colors
     static let titleColor = UIColor(hex: "#F9FAFB")
     static let subtitleColor = UIColor(hex: "#9CA3AF")
     static let tertiaryColor = UIColor(hex: "#6B7280")
 
-    // MARK: - Accent Colors
     static let accentBlue = UIColor(hex: "#3B82F6")
     static let accentPurple = UIColor(hex: "#8B5CF6")
     static let accentCyan = UIColor(hex: "#06B6D4")
     static let accentPink = UIColor(hex: "#EC4899")
     static let accentOrange = UIColor(hex: "#F97316")
 
-    // MARK: - Status Colors
     static let success = UIColor(hex: "#10B981")
     static let warning = UIColor(hex: "#F59E0B")
     static let error = UIColor(hex: "#EF4444")
     static let info = UIColor(hex: "#3B82F6")
 
-    // MARK: - Glassmorphism
     static let glassBackground = UIColor.white.withAlphaComponent(0.05)
     static let glassBorder = UIColor.white.withAlphaComponent(0.1)
     static let glassHighlight = UIColor.white.withAlphaComponent(0.15)
 
-    // MARK: - Shadows
     static let shadowColor = UIColor.black.withAlphaComponent(0.3)
     static let glowBlue = UIColor(hex: "#3B82F6").withAlphaComponent(0.4)
     static let glowPurple = UIColor(hex: "#8B5CF6").withAlphaComponent(0.4)
 
-    // MARK: - Gradients
     static var primaryGradient: [CGColor] {
         [UIColor(hex: "#6366F1").cgColor, UIColor(hex: "#8B5CF6").cgColor]
     }
@@ -77,7 +69,6 @@ enum Colors {
     }
 }
 
-// MARK: - UIColor Hex Extension
 extension UIColor {
     convenience init(hex: String) {
         var hexSanitized = hex.trimmingCharacters(in: .whitespacesAndNewlines)

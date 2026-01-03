@@ -35,23 +35,18 @@ final class AnalyticsService: AnalyticsServiceProtocol {
     func trackEvent(_ name: String, parameters: [String: Any]? = nil) {
         queue.async {
 
-            // Firebase Analytics, Mixpanel, Amplitude entegrasyonu
-            // Analytics.logEvent(name, parameters: parameters)
         }
     }
 
     func trackScreen(_ name: String) {
         queue.async {
 
-            // Analytics.setScreenName(name, screenClass: nil)
         }
     }
 
     func trackError(_ error: Error, context: [String: Any]? = nil) {
         queue.async {
 
-            // Crashlytics, Sentry entegrasyonu
-            // Crashlytics.recordError(error, userInfo: context)
         }
     }
 
@@ -63,7 +58,6 @@ final class AnalyticsService: AnalyticsServiceProtocol {
                 self?.userProperties.removeValue(forKey: name)
             }
 
-            // Analytics.setUserProperty(value, forName: name)
         }
     }
 }

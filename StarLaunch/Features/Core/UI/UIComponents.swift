@@ -7,7 +7,6 @@
 
 import UIKit
 
-// MARK: - GlassCard
 
 final class GlassCard: UIView {
 
@@ -82,7 +81,6 @@ final class GlassCard: UIView {
     }
 }
 
-// MARK: - GradientButton
 
 final class GradientButton: UIButton {
 
@@ -145,7 +143,6 @@ final class GradientButton: UIButton {
     }
 }
 
-// MARK: - AnimatedCounterLabel
 
 final class AnimatedCounterLabel: UILabel {
 
@@ -197,7 +194,6 @@ final class AnimatedCounterLabel: UILabel {
     }
 }
 
-// MARK: - PulsingView
 
 final class PulsingView: UIView {
 
@@ -243,7 +239,6 @@ final class PulsingView: UIView {
     }
 }
 
-// MARK: - ShimmerView
 
 final class ShimmerView: UIView {
 
@@ -293,7 +288,6 @@ final class ShimmerView: UIView {
     }
 }
 
-// MARK: - Interactive Button
 
 final class InteractiveButton: UIButton {
 

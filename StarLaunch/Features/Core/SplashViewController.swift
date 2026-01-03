@@ -17,7 +17,6 @@ final class SplashViewController: UIViewController {
     private var particleEmitter: CAEmitterLayer?
     private var pulseAnimationLayer: CAShapeLayer?
 
-    // Missing properties restoration
     private let progressContainer: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -53,11 +52,10 @@ final class SplashViewController: UIViewController {
     private let versionLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.textColor = Colors.subtitleColor.withAlphaComponent(0.6)
-        label.font = .systemFont(ofSize: 12)
-        if let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String {
-            label.text = "v\(version)"
-        }
+        label.textColor = Colors.subtitleColor.withAlphaComponent(0.7)
+        label.font = .systemFont(ofSize: 13, weight: .medium)
+        label.text = "StarLaunch • created by Can Sağnak"
+        label.textAlignment = .center
         return label
     }()
 
@@ -66,7 +64,6 @@ final class SplashViewController: UIViewController {
     private let viewModel = DashboardViewModel()
     private var cancellables = Set<AnyCancellable>()
 
-    // MARK: - UI Components
 
     private let gradientBackgroundLayer: CAGradientLayer = {
         let layer = CAGradientLayer()
@@ -152,9 +149,11 @@ final class SplashViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
+
+        updateLocalizedTexts()
+
         startAnimations()
 
-        // Delay data fetching slightly to allow animations to start
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
             self?.activityIndicator.startAnimating()
             self?.animateProgress()
@@ -162,6 +161,10 @@ final class SplashViewController: UIViewController {
         }
 
         bindViewModel()
+    }
+
+    private func updateLocalizedTexts() {
+        subtitleLabel.text = L10n.splashLoading
     }
 
     override func viewDidLayoutSubviews() {
@@ -188,7 +191,6 @@ final class SplashViewController: UIViewController {
             }
             .store(in: &cancellables)
 
-        // When data is ready (launch count > 0 or success), proceed
         viewModel.$launchCount
             .dropFirst()
             .receive(on: DispatchQueue.main)
@@ -217,7 +219,6 @@ final class SplashViewController: UIViewController {
     }
 
     private func animateProgress() {
-        // Simulate progress for 2 seconds mostly
         self.view.layoutIfNeeded()
         UIView.animate(withDuration: 1.5, delay: 0, options: .curveEaseInOut) {
             self.progressWidthConstraint?.constant = 150  // Partial progress
@@ -227,7 +228,6 @@ final class SplashViewController: UIViewController {
 
     private func animateProgressComplete() {
         self.view.layoutIfNeeded()
-        // Update constraint to match container width
         progressWidthConstraint?.isActive = false
         progressWidthConstraint = progressBar.widthAnchor.constraint(
             equalTo: progressContainer.widthAnchor)
@@ -272,7 +272,6 @@ final class SplashViewController: UIViewController {
         subtitleLabel.textColor = Colors.warning
 
         if viewModel.isOfflineMode {
-            // If offline mode is handled by VM it might have data
             animateProgressComplete()
         } else {
             showErrorAlert(message: message)
@@ -304,7 +303,6 @@ final class SplashViewController: UIViewController {
         present(alert, animated: true)
     }
 
-    // MARK: - Setup UI
 
     private func setupUI() {
         view.backgroundColor = Colors.appBackground
@@ -320,7 +318,6 @@ final class SplashViewController: UIViewController {
         view.addSubview(progressContainer)
         progressContainer.addSubview(progressBar)
         progressBar.layer.addSublayer(progressGradient)
-        view.addSubview(activityIndicator)
         view.addSubview(versionLabel)
 
         progressWidthConstraint = progressBar.widthAnchor.constraint(equalToConstant: 0)
@@ -368,10 +365,6 @@ final class SplashViewController: UIViewController {
             progressBar.bottomAnchor.constraint(equalTo: progressContainer.bottomAnchor),
             progressWidthConstraint!,
 
-            activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            activityIndicator.topAnchor.constraint(
-                equalTo: progressContainer.bottomAnchor, constant: 20),
-
             versionLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             versionLabel.bottomAnchor.constraint(
                 equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
@@ -398,7 +391,6 @@ final class SplashViewController: UIViewController {
             titleLabel.text?.append(fullText[index])
             currentCharacterIndex += 1
 
-            // Add subtle haptic for each character
             if currentCharacterIndex % 3 == 0 {
                 HapticManager.shared.lightTap()
             }

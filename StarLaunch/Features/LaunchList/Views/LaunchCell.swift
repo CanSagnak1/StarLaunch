@@ -229,6 +229,18 @@ final class LaunchCell: UITableViewCell {
 
         configureStatus(launch)
 
+        if LocalizationManager.shared.currentLanguage != .english {
+            Task {
+                let translated = await TranslationService.shared.translate(
+                    launch.name,
+                    to: LocalizationManager.shared.currentLanguage.code
+                )
+                await MainActor.run {
+                    self.missionNameLabel.text = translated
+                }
+            }
+        }
+
         if let imageURLString = launch.image, let url = URL(string: imageURLString) {
             Task {
                 patchImageView.image = await ImageLoader.shared.loadImage(from: url)
@@ -319,10 +331,12 @@ final class LaunchCell: UITableViewCell {
         let formatter = ISO8601DateFormatter()
         if let date = formatter.date(from: dateString) {
             let displayFormatter = DateFormatter()
-            displayFormatter.locale = Locale(identifier: "en_US")
-            displayFormatter.dateFormat = "MMM d, yyyy • h:mm a"
+            let identifier =
+                LocalizationManager.shared.currentLanguage == .turkish ? "tr_TR" : "en_US"
+            displayFormatter.locale = Locale(identifier: identifier)
+            displayFormatter.dateFormat = "d MMM yyyy • HH:mm"
             return displayFormatter.string(from: date)
         }
-        return "Date TBD"
+        return L10n.detailTbd
     }
 }

@@ -18,7 +18,6 @@ final class OnboardingManager {
 
     var hasSeenOnboarding: Bool {
         get {
-            // Check if user has seen the current version of onboarding
             let seenVersion = UserDefaults.standard.integer(forKey: onboardingVersionKey)
             return seenVersion >= currentOnboardingVersion
         }

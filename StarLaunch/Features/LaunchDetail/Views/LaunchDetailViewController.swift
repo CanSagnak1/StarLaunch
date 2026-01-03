@@ -232,7 +232,6 @@ final class LaunchDetailViewController: UIViewController {
         title = L10n.detailTitle
         crewTitleLabel.text = L10n.detailCrew
 
-        // Refresh dynamic content if available
         if let detail = viewModel.launchDetail {
             updateUIWith(detail)
         }
@@ -264,7 +263,6 @@ final class LaunchDetailViewController: UIViewController {
         favoriteBarButton.tintColor = isFavorite ? Colors.warning : Colors.titleColor
     }
 
-    // ... (lines 216-299)
 
     private func showNotificationPermissionAlert() {
         let alert = UIAlertController(
@@ -282,7 +280,6 @@ final class LaunchDetailViewController: UIViewController {
         present(alert, animated: true)
     }
 
-    // ... (lines 301-379)
 
     private func updateNotificationButton(isScheduled: Bool) {
         var config = notificationButton.configuration
@@ -302,16 +299,49 @@ final class LaunchDetailViewController: UIViewController {
 
         dateLabel.text = formatDate(launchDetail.net)
 
-        missionDescriptionLabel.text =
-            launchDetail.mission?.description ?? L10n.detailNoMission
+        let originalDescription = launchDetail.mission?.description ?? L10n.detailNoMission
+        let originalStatus = launchDetail.status.name
+        let originalRocket = launchDetail.rocket.configuration.fullName
+        let originalLocation = "\(launchDetail.pad.name), \(launchDetail.pad.location.name)"
+        let originalProvider = launchDetail.launchServiceProvider.name
 
-        rocketInfoView.updateValue(launchDetail.rocket.configuration.fullName)
-        launchPadInfoView.updateValue("\(launchDetail.pad.name), \(launchDetail.pad.location.name)")
-        serviceProviderInfoView.updateValue(launchDetail.launchServiceProvider.name)
+        missionDescriptionLabel.text = originalDescription
+        rocketInfoView.updateValue(originalRocket)
+        launchPadInfoView.updateValue(originalLocation)
+        serviceProviderInfoView.updateValue(originalProvider)
 
-        // Localize helper views titles
+        if LocalizationManager.shared.currentLanguage != .english {
+            Task {
+                let langCode = LocalizationManager.shared.currentLanguage.code
+
+                async let translatedDesc = TranslationService.shared.translate(
+                    originalDescription, to: langCode)
+                async let translatedStatus = TranslationService.shared.translate(
+                    originalStatus, to: langCode)
+                async let translatedRocket = TranslationService.shared.translate(
+                    originalRocket, to: langCode)
+                async let translatedLocation = TranslationService.shared.translate(
+                    originalLocation, to: langCode)
+                async let translatedProvider = TranslationService.shared.translate(
+                    originalProvider, to: langCode)
+
+                let results = await (
+                    translatedDesc, translatedStatus, translatedRocket, translatedLocation,
+                    translatedProvider
+                )
+
+                await MainActor.run {
+                    self.missionDescriptionLabel.text = results.0
+                    self.statusLabel.text = results.1.uppercased()
+                    self.rocketInfoView.updateValue(results.2)
+                    self.launchPadInfoView.updateValue(results.3)
+                    self.serviceProviderInfoView.updateValue(results.4)
+                }
+            }
+        }
+
         rocketInfoView.updateTitle(L10n.detailRocket)
-        launchPadInfoView.updateTitle(L10n.detailLocation)  // or detailPad if I had it, checking L10n... I added detailLocation
+        launchPadInfoView.updateTitle(L10n.detailLocation)
         serviceProviderInfoView.updateTitle(L10n.detailProvider)
 
         if let imageUrlString = launchDetail.image, let url = URL(string: imageUrlString) {
@@ -332,7 +362,6 @@ final class LaunchDetailViewController: UIViewController {
         }
     }
 
-    // ... (lines 418-442)
 
     private func formatDate(_ dateString: String) -> String {
         let dateFormatter = ISO8601DateFormatter()

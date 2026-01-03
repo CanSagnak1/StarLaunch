@@ -33,7 +33,6 @@ final class HapticManager {
         notification.prepare()
     }
 
-    // MARK: - Impact Feedback
 
     func lightTap() {
         lightImpact.impactOccurred()
@@ -55,13 +54,11 @@ final class HapticManager {
         rigidImpact.impactOccurred()
     }
 
-    // MARK: - Selection Feedback
 
     func selectionChanged() {
         selection.selectionChanged()
     }
 
-    // MARK: - Notification Feedback
 
     func success() {
         notification.notificationOccurred(.success)
@@ -75,7 +72,6 @@ final class HapticManager {
         notification.notificationOccurred(.error)
     }
 
-    // MARK: - Custom Patterns
 
     func buttonTap() {
         lightImpact.impactOccurred(intensity: 0.7)

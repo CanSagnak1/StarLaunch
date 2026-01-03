@@ -9,17 +9,14 @@ import UIKit
 
 final class MainTabBarController: UITabBarController {
 
-    // MARK: - Properties
     private let factory: ViewModelFactoryProtocol
     private let analyticsService: AnalyticsServiceProtocol
 
-    // Tab Coordinators
     private lazy var settingsNavController = createNavigationController()
     private lazy var dashboardNavController = createNavigationController()
     private lazy var launchesNavController = createNavigationController()
     private lazy var favoritesNavController = createNavigationController()
 
-    // MARK: - Initialization
     init(
         factory: ViewModelFactoryProtocol = ViewModelFactory(),
         analyticsService: AnalyticsServiceProtocol = DependencyContainer.shared.analyticsService
@@ -33,7 +30,6 @@ final class MainTabBarController: UITabBarController {
         fatalError("init(coder:) has not been implemented")
     }
 
-    // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         setupTabBar()
@@ -41,11 +37,9 @@ final class MainTabBarController: UITabBarController {
         setupTabBarAppearance()
         setupLanguageObserver()
 
-        // Default to Dashboard tab (index 0)
         selectedIndex = 0
     }
 
-    // MARK: - Setup
     private func setupLanguageObserver() {
         NotificationCenter.default.addObserver(
             self,
@@ -69,20 +63,17 @@ final class MainTabBarController: UITabBarController {
     func refreshAllTabsForLanguageChange() {
         updateTabBarTitles()
 
-        // Refresh Dashboard
         if let dashboardVC = dashboardNavController.viewControllers.first
             as? DashboardViewController
         {
             dashboardVC.refreshForLanguageChange()
         }
 
-        // Refresh Launches
         if let launchesVC = launchesNavController.viewControllers.first as? LaunchListViewController
         {
             launchesVC.refreshForLanguageChange()
         }
 
-        // Refresh Favorites
         if let favoritesVC = favoritesNavController.viewControllers.first
             as? FavoritesViewController
         {
@@ -93,25 +84,20 @@ final class MainTabBarController: UITabBarController {
     private func setupTabBar() {
         delegate = self
 
-        // Custom tab bar background
         let appearance = UITabBarAppearance()
         appearance.configureWithTransparentBackground()
         appearance.backgroundColor = Colors.cardBackground.withAlphaComponent(0.95)
 
-        // Add blur effect
         appearance.backgroundEffect = UIBlurEffect(style: .dark)
 
-        // Tab bar item appearance
         let itemAppearance = UITabBarItemAppearance()
 
-        // Normal state
         itemAppearance.normal.iconColor = Colors.tertiaryColor
         itemAppearance.normal.titleTextAttributes = [
             .foregroundColor: Colors.tertiaryColor,
             .font: UIFont.systemFont(ofSize: 10, weight: .medium),
         ]
 
-        // Selected state
         itemAppearance.selected.iconColor = Colors.accentCyan
         itemAppearance.selected.titleTextAttributes = [
             .foregroundColor: Colors.accentCyan,
@@ -125,7 +111,6 @@ final class MainTabBarController: UITabBarController {
         tabBar.standardAppearance = appearance
         tabBar.scrollEdgeAppearance = appearance
 
-        // Add top border
         let topBorder = CALayer()
         topBorder.frame = CGRect(x: 0, y: 0, width: tabBar.frame.width, height: 0.5)
         topBorder.backgroundColor = Colors.glassBorder.cgColor
@@ -133,7 +118,6 @@ final class MainTabBarController: UITabBarController {
     }
 
     private func setupViewControllers() {
-        // Dashboard Tab (index 0)
         let dashboardViewModel = factory.makeDashboardViewModel()
         let dashboardVC = DashboardViewController(viewModel: dashboardViewModel, coordinator: self)
         dashboardNavController.setViewControllers([dashboardVC], animated: false)
@@ -144,7 +128,6 @@ final class MainTabBarController: UITabBarController {
         )
         dashboardNavController.tabBarItem.tag = 0
 
-        // Launches Tab (index 1)
         let launchesViewModel = factory.makeLaunchListViewModel()
         let launchesVC = LaunchListViewController(viewModel: launchesViewModel, coordinator: self)
         launchesNavController.setViewControllers([launchesVC], animated: false)
@@ -155,7 +138,6 @@ final class MainTabBarController: UITabBarController {
         )
         launchesNavController.tabBarItem.tag = 1
 
-        // Favorites Tab (index 2)
         let favoritesVC = FavoritesViewController(coordinator: self)
         favoritesNavController.setViewControllers([favoritesVC], animated: false)
         favoritesNavController.tabBarItem = UITabBarItem(
@@ -165,7 +147,6 @@ final class MainTabBarController: UITabBarController {
         )
         favoritesNavController.tabBarItem.tag = 2
 
-        // Settings Tab (index 3 - rightmost)
         let settingsVC = SettingsViewController(coordinator: self)
         settingsNavController.setViewControllers([settingsVC], animated: false)
         settingsNavController.tabBarItem = UITabBarItem(
@@ -184,8 +165,6 @@ final class MainTabBarController: UITabBarController {
     }
 
     private func setupTabBarAppearance() {
-        // TabBar appearance is fully configured in setupTabBar()
-        // No additional layers needed
     }
 
     private func createNavigationController() -> UINavigationController {
@@ -206,14 +185,12 @@ final class MainTabBarController: UITabBarController {
     }
 }
 
-// MARK: - UITabBarControllerDelegate
 extension MainTabBarController: UITabBarControllerDelegate {
     func tabBarController(
         _ tabBarController: UITabBarController, didSelect viewController: UIViewController
     ) {
         HapticManager.shared.selectionChanged()
 
-        // Track tab selection
         let tabNames = ["Dashboard", "Launches", "Favorites", "Settings"]
         if let index = viewControllers?.firstIndex(of: viewController), index < tabNames.count {
             analyticsService.trackScreen(tabNames[index])
@@ -221,13 +198,11 @@ extension MainTabBarController: UITabBarControllerDelegate {
     }
 }
 
-// MARK: - Navigation (Coordinator-like functionality)
 extension MainTabBarController {
     func showLaunchDetail(launchID: String, launchName: String? = nil) {
         let viewModel = factory.makeLaunchDetailViewModel(launchID: launchID)
         let detailVC = LaunchDetailViewController(viewModel: viewModel)
 
-        // Push on currently selected navigation controller
         if let navController = selectedViewController as? UINavigationController {
             navController.pushViewController(detailVC, animated: true)
         }
@@ -254,13 +229,11 @@ extension MainTabBarController {
     }
 
     func showLaunchList() {
-        // Switch to Launches tab (index 1)
         selectedIndex = 1
         HapticManager.shared.navigation()
     }
 
     func showFavorites() {
-        // Switch to Favorites tab (index 2)
         selectedIndex = 2
         HapticManager.shared.navigation()
     }

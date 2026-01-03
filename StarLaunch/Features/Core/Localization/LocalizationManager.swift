@@ -24,6 +24,10 @@ enum Language: String, CaseIterable {
         case .turkish: return L10n.languageTurkish
         }
     }
+
+    var code: String {
+        return rawValue
+    }
 }
 
 final class LocalizationManager {
@@ -49,7 +53,6 @@ final class LocalizationManager {
         {
             currentLanguage = language
         } else {
-            // Default to device language or English
             let preferredLanguage = Locale.preferredLanguages.first ?? "en"
             if preferredLanguage.hasPrefix("tr") {
                 currentLanguage = .turkish
@@ -80,16 +83,13 @@ final class LocalizationManager {
     }
 }
 
-// MARK: - String Extension
 extension String {
     var localized: String {
         return LocalizationManager.shared.localizedString(for: self)
     }
 }
 
-// MARK: - L10n (Localization Keys)
 enum L10n {
-    // MARK: - Common
     static var ok: String { "common.ok".localized }
     static var cancel: String { "common.cancel".localized }
     static var error: String { "common.error".localized }
@@ -100,19 +100,16 @@ enum L10n {
     static var success: String { "common.success".localized }
     static var commonPullToRefresh: String { "common.pullToRefresh".localized }
 
-    // MARK: - Tabs
     static var tabDashboard: String { "tab.dashboard".localized }
     static var tabLaunches: String { "tab.launches".localized }
     static var tabFavorites: String { "tab.favorites".localized }
     static var tabSettings: String { "tab.settings".localized }
 
-    // MARK: - Splash
     static var splashTitle: String { "splash.title".localized }
     static var splashTagline: String { "splash.tagline".localized }
     static var splashLoading: String { "splash.loading".localized }
     static var splashReady: String { "splash.ready".localized }
 
-    // MARK: - Onboarding
     static var onboardingWelcomeTitle: String { "onboarding.welcome.title".localized }
     static var onboardingWelcomeDesc: String { "onboarding.welcome.description".localized }
     static var onboardingCountdownTitle: String { "onboarding.countdown.title".localized }
@@ -129,7 +126,6 @@ enum L10n {
     static var onboardingOfflineTitle: String { "onboarding.offline.title".localized }
     static var onboardingOfflineDesc: String { "onboarding.offline.description".localized }
 
-    // MARK: - Dashboard
     static var dashboardTitle: String { "dashboard.title".localized }
     static var dashboardStarship: String { "dashboard.starship".localized }
     static var dashboardAgencies: String { "dashboard.agencies".localized }
@@ -140,14 +136,12 @@ enum L10n {
     static var dashboardQuickActions: String { "dashboard.quickActions".localized }
     static var dashboardVisitSpacex: String { "dashboard.visitSpacex".localized }
 
-    // MARK: - Launches
     static var launchesTitle: String { "launches.title".localized }
     static var launchesEmptyTitle: String { "launches.empty.title".localized }
     static var launchesEmptyMessage: String { "launches.empty.message".localized }
     static var launchesSearch: String { "launches.search".localized }
     static var launchesOfflineMode: String { "launches.offlineMode".localized }
 
-    // MARK: - Launch Detail
     static var detailMission: String { "detail.mission".localized }
     static var detailProvider: String { "detail.provider".localized }
     static var detailLocation: String { "detail.location".localized }
@@ -168,13 +162,11 @@ enum L10n {
     static var detailTbd: String { "detail.tbd".localized }
     static var detailNoMission: String { "detail.noMission".localized }
 
-    // MARK: - Favorites
     static var favoritesTitle: String { "favorites.title".localized }
     static var favoritesEmptyTitle: String { "favorites.empty.title".localized }
     static var favoritesEmptyMessage: String { "favorites.empty.message".localized }
     static var favoritesBrowse: String { "favorites.browse".localized }
 
-    // MARK: - Search
     static var searchTitle: String { "search.title".localized }
     static var searchPlaceholder: String { "search.placeholder".localized }
     static var searchNoResults: String { "search.noResults".localized }
@@ -185,7 +177,6 @@ enum L10n {
     static var searchSortName: String { "search.sort.name".localized }
     static var searchSortProvider: String { "search.sort.provider".localized }
 
-    // MARK: - Settings
     static var settingsTitle: String { "settings.title".localized }
     static var settingsSectionLanguage: String { "settings.section.language".localized }
     static var settingsSectionGeneral: String { "settings.section.general".localized }
@@ -202,17 +193,14 @@ enum L10n {
     static var settingsClearCacheSuccess: String { "settings.clearCache.success".localized }
     static var settingsSelectLanguage: String { "settings.selectLanguage".localized }
 
-    // MARK: - Language
     static var languageEnglish: String { "language.english".localized }
     static var languageTurkish: String { "language.turkish".localized }
 
-    // MARK: - Errors
     static var errorNoInternet: String { "error.noInternet".localized }
     static var errorTimeout: String { "error.timeout".localized }
     static var errorServer: String { "error.server".localized }
     static var errorGeneric: String { "error.generic".localized }
 
-    // MARK: - App Empty States
     static var emptyNoDataTitle: String { "empty.noData.title".localized }
     static var emptyNoDataMessage: String { "empty.noData.message".localized }
     static var emptyNoSearchResultsTitle: String { "empty.noSearchResults.title".localized }
@@ -220,10 +208,8 @@ enum L10n {
     static var emptyNoInternetTitle: String { "empty.noInternet.title".localized }
     static var emptyErrorTitle: String { "empty.error.title".localized }
 
-    // MARK: - Share
     static var shareText: String { "share.text".localized }
 
-    // MARK: - Launch Status
     static var launchStatusLaunchingSoon: String { "launch.status.launchingSoon".localized }
     static var launchStatusGoForLaunch: String { "launch.status.goForLaunch".localized }
     static var launchStatusScheduled: String { "launch.status.scheduled".localized }

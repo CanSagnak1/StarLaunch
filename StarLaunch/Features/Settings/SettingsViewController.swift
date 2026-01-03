@@ -10,7 +10,6 @@ import UIKit
 
 final class SettingsViewController: UIViewController {
 
-    // MARK: - Properties
     private weak var coordinator: MainTabBarController?
 
     private enum Section: Int, CaseIterable {
@@ -123,7 +122,6 @@ final class SettingsViewController: UIViewController {
         }
     }
 
-    // MARK: - UI Components
     private let gradientBackgroundLayer: CAGradientLayer = {
         let layer = CAGradientLayer()
         layer.colors = [
@@ -157,7 +155,6 @@ final class SettingsViewController: UIViewController {
         return tableView
     }()
 
-    // MARK: - Initialization
     init(coordinator: MainTabBarController?) {
         self.coordinator = coordinator
         super.init(nibName: nil, bundle: nil)
@@ -167,7 +164,6 @@ final class SettingsViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
-    // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
@@ -180,7 +176,6 @@ final class SettingsViewController: UIViewController {
         gradientBackgroundLayer.frame = view.bounds
     }
 
-    // MARK: - Setup
     private func setupLanguageObserver() {
         NotificationCenter.default.addObserver(
             self,
@@ -194,7 +189,6 @@ final class SettingsViewController: UIViewController {
         setupNavigationBar()
         tableView.reloadData()
 
-        // Update tab bar item
         tabBarItem.title = L10n.tabSettings
     }
 
@@ -233,7 +227,6 @@ final class SettingsViewController: UIViewController {
         ])
     }
 
-    // MARK: - Actions
     private func showLanguagePicker() {
         HapticManager.shared.buttonTap()
 
@@ -249,7 +242,6 @@ final class SettingsViewController: UIViewController {
                 self?.changeLanguage(to: language)
             }
 
-            // Check mark for current language
             if language == LocalizationManager.shared.currentLanguage {
                 action.setValue(true, forKey: "checked")
             }
@@ -272,7 +264,6 @@ final class SettingsViewController: UIViewController {
         LocalizationManager.shared.setLanguage(language)
         HapticManager.shared.success()
 
-        // Notify coordinator to refresh all tabs
         coordinator?.refreshAllTabsForLanguageChange()
     }
 
@@ -349,7 +340,6 @@ final class SettingsViewController: UIViewController {
     }
 }
 
-// MARK: - UITableViewDataSource
 extension SettingsViewController: UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
         return Section.allCases.count
@@ -424,7 +414,6 @@ extension SettingsViewController: UITableViewDataSource {
     }
 }
 
-// MARK: - UITableViewDelegate
 extension SettingsViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
@@ -481,7 +470,6 @@ extension SettingsViewController: UITableViewDelegate {
     }
 }
 
-// MARK: - SettingsCell
 final class SettingsCell: UITableViewCell {
     static let reuseID = "SettingsCell"
 
