@@ -1,55 +1,77 @@
-"""
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <style>
-            body {
-                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-                padding: 20px;
-                color: #F9FAFB;
-                background-color: transparent;
-                line-height: 1.6;
-            }
-            h1 { color: #06B6D4; font-size: 24px; margin-bottom: 20px; }
-            h2 { color: #8B5CF6; font-size: 18px; margin-top: 24px; }
-            p { color: #9CA3AF; margin: 12px 0; }
-            ul { color: #9CA3AF; padding-left: 20px; }
-            li { margin: 8px 0; }
-            .date { color: #6B7280; font-size: 14px; margin-bottom: 24px; }
-        </style>
-    </head>
-    <body>
-        <h1>Privacy Policy</h1>
-        <p class="date">Last updated: January 3, 2026</p>
-        
-        <p>Welcome to StarLaunch. We respect your privacy and are committed to protecting your personal data.</p>
-        
-        <h2>Information We Collect</h2>
-        <p>StarLaunch collects minimal data to provide you with the best experience:</p>
-        <ul>
-            <li><strong>Usage Data:</strong> We may collect anonymous usage statistics to improve the app</li>
-            <li><strong>Favorites:</strong> Your favorite launches are stored locally on your device</li>
-            <li><strong>Notifications:</strong> If enabled, we store notification preferences locally</li>
-        </ul>
-        
-        <h2>Data Storage</h2>
-        <p>All your personal data (favorites, preferences) is stored locally on your device. We do not upload or store your personal information on external servers.</p>
-        
-        <h2>Third-Party Services</h2>
-        <p>StarLaunch uses The Space Devs API to fetch launch data. This is public data and no personal information is shared with this service.</p>
-        
-        <h2>Your Rights</h2>
-        <p>You have the right to:</p>
-        <ul>
-            <li>Access your data stored in the app</li>
-            <li>Delete your data by clearing app data or uninstalling</li>
-            <li>Opt-out of analytics by disabling in your device settings</li>
-        </ul>
-        
-        <h2>Contact Us</h2>
-        <p>If you have any questions about this Privacy Policy, please contact us at:</p>
-        <p>Contact Me: https://github.com/CanSagnak1/</p>
-    </body>
-    </html>
-    """
+# Privacy Policy for StarLaunch
+
+**Last Updated: January 4, 2026**
+
+Thank you for using StarLaunch. This Privacy Policy explains how we handle your information when you use our mobile application.
+
+---
+
+## Overview
+
+StarLaunch is a space launch tracking application. We are committed to protecting your privacy and being transparent about our data practices. **We do not collect, store, or share any personal information.**
+
+---
+
+## Information We Collect
+
+### Data Stored Locally on Your Device
+The following data is stored **only on your device** and is never transmitted to our servers:
+- **Favorites:** Your saved rocket launches
+- **Preferences:** App settings such as language and notification preferences
+- **Cache:** Temporary data for offline access and improved performance
+
+### Data We Do NOT Collect
+- Personal identification information (name, email, phone number)
+- Location data
+- Device identifiers
+- Usage analytics or tracking data
+
+---
+
+## Third-Party Services
+
+### The Space Devs API
+StarLaunch fetches publicly available rocket launch data from [The Space Devs API](https://thespacedevs.com/). This is public information, and no personal data is shared with this service.
+
+### Apple Push Notification Service (APNs)
+If you enable notifications, we use Apple's push notification service to send you launch reminders. No personal data is shared beyond what Apple requires for notification delivery.
+
+---
+
+## Data Security
+
+All your data remains on your device. We do not operate servers that store user data. Your favorites and preferences are protected by your device's built-in security features.
+
+---
+
+## Children's Privacy
+
+StarLaunch is rated 4+ and is suitable for all ages. We do not knowingly collect any personal information from children or any other users.
+
+---
+
+## Your Rights
+
+You have full control over your data:
+- **Access:** View your saved favorites and preferences within the app
+- **Delete:** Clear all data by deleting the app or using the app's reset function
+- **Portability:** Your data stays on your device
+
+---
+
+## Changes to This Policy
+
+We may update this Privacy Policy from time to time. Any changes will be reflected in the "Last Updated" date above. Continued use of the app after changes constitutes acceptance of the updated policy.
+
+---
+
+## Contact Us
+
+If you have any questions or concerns about this Privacy Policy, please contact us:
+
+- **GitHub:** [github.com/CanSagnak1](https://github.com/CanSagnak1)
+- **Email:** dddfrcgyuc123@gmail.com
+
+---
+
+© 2026 StarLaunch. All rights reserved.
