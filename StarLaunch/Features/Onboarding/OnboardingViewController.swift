@@ -38,6 +38,24 @@ final class OnboardingViewController: UIViewController {
             description: L10n.onboardingNotificationsDesc
         ),
         OnboardingPage(
+            icon: "square.grid.2x2.fill",
+            iconColor: Colors.accentCyan,
+            title: L10n.onboardingWidgetsTitle,
+            description: L10n.onboardingWidgetsDesc
+        ),
+        OnboardingPage(
+            icon: "calendar.badge.plus",
+            iconColor: Colors.success,
+            title: L10n.onboardingCalendarTitle,
+            description: L10n.onboardingCalendarDesc
+        ),
+        OnboardingPage(
+            icon: "chart.bar.xaxis",
+            iconColor: Colors.accentBlue,
+            title: L10n.onboardingCompareTitle,
+            description: L10n.onboardingCompareDesc
+        ),
+        OnboardingPage(
             icon: "wifi.slash",
             iconColor: Colors.success,
             title: L10n.onboardingOfflineTitle,
@@ -88,7 +106,6 @@ final class OnboardingViewController: UIViewController {
         return pc
     }()
 
-
     private lazy var skipButton: UIButton = {
         let button = UIButton(type: .system)
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -98,7 +115,6 @@ final class OnboardingViewController: UIViewController {
         button.addTarget(self, action: #selector(skipTapped), for: .touchUpInside)
         return button
     }()
-
 
     private lazy var nextButton: GradientButton = {
         let button = GradientButton()

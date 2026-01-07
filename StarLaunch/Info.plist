@@ -94,6 +94,12 @@
 	<key>NSUserNotificationUsageDescription</key>
 	<string>StarLaunch uses notifications to remind you about upcoming rocket launches.</string>
 	
+	<!-- Calendar Access -->
+	<key>NSCalendarsFullAccessUsageDescription</key>
+	<string>StarLaunch can add launch events to your calendar so you never miss a rocket launch.</string>
+	<key>NSCalendarsUsageDescription</key>
+	<string>StarLaunch can add launch events to your calendar so you never miss a rocket launch.</string>
+	
 	<!-- Localization -->
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>

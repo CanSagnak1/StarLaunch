@@ -39,6 +39,9 @@ final class LaunchDetailViewController: UIViewController {
         let scrollView = UIScrollView()
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         scrollView.backgroundColor = .clear
+        scrollView.isScrollEnabled = true
+        scrollView.alwaysBounceVertical = true
+        scrollView.showsVerticalScrollIndicator = true
         return scrollView
     }()
 
@@ -138,6 +141,17 @@ final class LaunchDetailViewController: UIViewController {
         return button
     }()
 
+    private lazy var calendarBarButton: UIBarButtonItem = {
+        let button = UIBarButtonItem(
+            image: UIImage(systemName: "calendar.badge.plus"),
+            style: .plain,
+            target: self,
+            action: #selector(showCalendarOptions)
+        )
+        button.tintColor = Colors.accentPurple
+        return button
+    }()
+
     private lazy var rocketInfoView = InfoRowView(
         iconSystemName: "airplane", title: "Rocket", value: "...")
     private lazy var launchPadInfoView = InfoRowView(
@@ -167,8 +181,11 @@ final class LaunchDetailViewController: UIViewController {
         let view = UIView()
         view.isHidden = true
         view.translatesAutoresizingMaskIntoConstraints = false
+        view.clipsToBounds = true
         return view
     }()
+
+    private var astronautsHeightConstraint: NSLayoutConstraint?
     private var astronautListVC: AstronautListViewController?
 
     private lazy var mainStackView: UIStackView = {
@@ -263,6 +280,142 @@ final class LaunchDetailViewController: UIViewController {
         favoriteBarButton.tintColor = isFavorite ? Colors.warning : Colors.titleColor
     }
 
+    // MARK: - Calendar Actions
+
+    @objc private func showCalendarOptions() {
+        HapticManager.shared.buttonTap()
+        guard let detail = viewModel.launchDetail else { return }
+
+        // Check if already in calendar
+        if CalendarManager.shared.isLaunchInCalendar(launchID: detail.id) {
+            showRemoveFromCalendarAlert(launchID: detail.id)
+            return
+        }
+
+        let actionSheet = UIAlertController(
+            title: L10n.calendarReminderTitle,
+            message: nil,
+            preferredStyle: .actionSheet
+        )
+
+        for option in CalendarReminderOption.allCases {
+            actionSheet.addAction(
+                UIAlertAction(title: option.displayTitle, style: .default) { [weak self] _ in
+                    self?.addToCalendar(with: option)
+                })
+        }
+
+        actionSheet.addAction(UIAlertAction(title: L10n.cancel, style: .cancel))
+
+        if let popover = actionSheet.popoverPresentationController {
+            popover.barButtonItem = calendarBarButton
+        }
+
+        present(actionSheet, animated: true)
+    }
+
+    private func addToCalendar(with reminderOption: CalendarReminderOption) {
+        guard let detail = viewModel.launchDetail else { return }
+
+        Task {
+            do {
+                _ = try await CalendarManager.shared.addLaunchDetailToCalendar(
+                    detail, reminderOption: reminderOption)
+                await MainActor.run {
+                    updateCalendarButton(isInCalendar: true)
+                    showCalendarSuccessToast()
+                }
+            } catch {
+                await MainActor.run {
+                    showCalendarErrorAlert(error: error)
+                }
+            }
+        }
+    }
+
+    private func showRemoveFromCalendarAlert(launchID: String) {
+        let alert = UIAlertController(
+            title: L10n.calendarRemoveFromCalendar,
+            message: nil,
+            preferredStyle: .alert
+        )
+
+        alert.addAction(
+            UIAlertAction(title: L10n.calendarRemoveFromCalendar, style: .destructive) {
+                [weak self] _ in
+                self?.removeFromCalendar(launchID: launchID)
+            })
+        alert.addAction(UIAlertAction(title: L10n.cancel, style: .cancel))
+
+        present(alert, animated: true)
+    }
+
+    private func removeFromCalendar(launchID: String) {
+        Task {
+            do {
+                try await CalendarManager.shared.removeLaunchFromCalendar(launchID: launchID)
+                await MainActor.run {
+                    updateCalendarButton(isInCalendar: false)
+                    HapticManager.shared.success()
+                }
+            } catch {
+                await MainActor.run {
+                    showCalendarErrorAlert(error: error)
+                }
+            }
+        }
+    }
+
+    private func updateCalendarButton(isInCalendar: Bool) {
+        calendarBarButton.image = UIImage(
+            systemName: isInCalendar ? "calendar.badge.checkmark" : "calendar.badge.plus")
+        calendarBarButton.tintColor = isInCalendar ? Colors.success : Colors.accentPurple
+    }
+
+    private func showCalendarSuccessToast() {
+        HapticManager.shared.success()
+        // Simple toast notification
+        let toast = UILabel()
+        toast.text = "✓ " + L10n.calendarAdded
+        toast.font = .systemFont(ofSize: 14, weight: .medium)
+        toast.textColor = .white
+        toast.backgroundColor = Colors.success
+        toast.textAlignment = .center
+        toast.layer.cornerRadius = 8
+        toast.clipsToBounds = true
+        toast.translatesAutoresizingMaskIntoConstraints = false
+
+        view.addSubview(toast)
+        NSLayoutConstraint.activate([
+            toast.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            toast.bottomAnchor.constraint(
+                equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
+            toast.widthAnchor.constraint(greaterThanOrEqualToConstant: 150),
+            toast.heightAnchor.constraint(equalToConstant: 36),
+        ])
+
+        toast.alpha = 0
+        UIView.animate(withDuration: 0.3) {
+            toast.alpha = 1
+        } completion: { _ in
+            UIView.animate(withDuration: 0.3, delay: 2.0) {
+                toast.alpha = 0
+            } completion: { _ in
+                toast.removeFromSuperview()
+            }
+        }
+    }
+
+    private func showCalendarErrorAlert(error: Error) {
+        HapticManager.shared.error()
+        let alert = UIAlertController(
+            title: L10n.error,
+            message: error.localizedDescription,
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: L10n.ok, style: .default))
+        present(alert, animated: true)
+    }
 
     private func showNotificationPermissionAlert() {
         let alert = UIAlertController(
@@ -279,7 +432,6 @@ final class LaunchDetailViewController: UIViewController {
         alert.addAction(UIAlertAction(title: L10n.cancel, style: .cancel))
         present(alert, animated: true)
     }
-
 
     private func updateNotificationButton(isScheduled: Bool) {
         var config = notificationButton.configuration
@@ -355,13 +507,23 @@ final class LaunchDetailViewController: UIViewController {
             crewTitleLabel.isHidden = false
             crewTitleLabel.text = L10n.detailCrew
             astronautsContainerView.isHidden = false
+            astronautsHeightConstraint?.isActive = false
+            astronautsHeightConstraint = astronautsContainerView.heightAnchor.constraint(
+                equalToConstant: 150)
+            astronautsHeightConstraint?.isActive = true
             updateAstronauts(with: astronauts)
         } else {
             crewTitleLabel.isHidden = true
             astronautsContainerView.isHidden = true
+            astronautsHeightConstraint?.isActive = false
+            astronautsHeightConstraint = astronautsContainerView.heightAnchor.constraint(
+                equalToConstant: 0)
+            astronautsHeightConstraint?.isActive = true
         }
-    }
 
+        // Force layout update for scroll
+        view.layoutIfNeeded()
+    }
 
     private func formatDate(_ dateString: String) -> String {
         let dateFormatter = ISO8601DateFormatter()
@@ -449,13 +611,19 @@ final class LaunchDetailViewController: UIViewController {
             mainStackView.trailingAnchor.constraint(
                 equalTo: contentView.trailingAnchor, constant: -padding),
             mainStackView.bottomAnchor.constraint(
-                equalTo: contentView.bottomAnchor, constant: -padding),
+                equalTo: contentView.bottomAnchor, constant: -padding - 20),
 
-            astronautsContainerView.heightAnchor.constraint(equalToConstant: 150),
+            astronautsContainerView.heightAnchor.constraint(greaterThanOrEqualToConstant: 0),
 
             activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor),
         ])
+
+        // Use content layout guide for proper scrolling
+        scrollView.contentInsetAdjustmentBehavior = .automatic
+
+        // Force layout update
+        view.layoutIfNeeded()
     }
 
     override func viewDidLayoutSubviews() {
@@ -467,7 +635,7 @@ final class LaunchDetailViewController: UIViewController {
         title = L10n.detailTitle
         navigationController?.navigationBar.tintColor = Colors.accentBlue
         navigationItem.largeTitleDisplayMode = .never
-        navigationItem.rightBarButtonItems = [shareBarButton, favoriteBarButton]
+        navigationItem.rightBarButtonItems = [shareBarButton, calendarBarButton, favoriteBarButton]
     }
 
     private func bindViewModel() {

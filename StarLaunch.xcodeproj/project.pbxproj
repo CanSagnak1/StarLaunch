@@ -6,11 +6,52 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		7A6467AB2F0E779000100B14 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A6467AA2F0E779000100B14 /* WidgetKit.framework */; };
+		7A6467AD2F0E779000100B14 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A6467AC2F0E779000100B14 /* SwiftUI.framework */; };
+		7A6467BE2F0E779000100B14 /* StarLaunchWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 7A6467A82F0E779000100B14 /* StarLaunchWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		7A6467BC2F0E779000100B14 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7AC654AE2E9670FB00148F38 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7A6467A72F0E778F00100B14;
+			remoteInfo = StarLaunchWidgetExtension;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		7A6467BF2F0E779000100B14 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				7A6467BE2F0E779000100B14 /* StarLaunchWidgetExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		7A6467A82F0E779000100B14 /* StarLaunchWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = StarLaunchWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		7A6467AA2F0E779000100B14 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		7A6467AC2F0E779000100B14 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		7A6467DB2F0E78F700100B14 /* StarLaunchWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = StarLaunchWidgetExtension.entitlements; sourceTree = "<group>"; };
 		7AC654B62E9670FB00148F38 /* StarLaunch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StarLaunch.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		7A6467DE2F0E7CAA00100B14 /* Exceptions for "StarLaunchWidget" folder in "StarLaunchWidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 7A6467A72F0E778F00100B14 /* StarLaunchWidgetExtension */;
+		};
 		7AC654C82E9670FC00148F38 /* Exceptions for "StarLaunch" folder in "StarLaunch" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -21,6 +62,14 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		7A6467AE2F0E779000100B14 /* StarLaunchWidget */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				7A6467DE2F0E7CAA00100B14 /* Exceptions for "StarLaunchWidget" folder in "StarLaunchWidgetExtension" target */,
+			);
+			path = StarLaunchWidget;
+			sourceTree = "<group>";
+		};
 		7AC654B82E9670FB00148F38 /* StarLaunch */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
@@ -32,6 +81,15 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		7A6467A52F0E778F00100B14 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7A6467AD2F0E779000100B14 /* SwiftUI.framework in Frameworks */,
+				7A6467AB2F0E779000100B14 /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		7AC654B32E9670FB00148F38 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -42,10 +100,22 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		7A6467A92F0E779000100B14 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				7A6467AA2F0E779000100B14 /* WidgetKit.framework */,
+				7A6467AC2F0E779000100B14 /* SwiftUI.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		7AC654AD2E9670FB00148F38 = {
 			isa = PBXGroup;
 			children = (
+				7A6467DB2F0E78F700100B14 /* StarLaunchWidgetExtension.entitlements */,
 				7AC654B82E9670FB00148F38 /* StarLaunch */,
+				7A6467AE2F0E779000100B14 /* StarLaunchWidget */,
+				7A6467A92F0E779000100B14 /* Frameworks */,
 				7AC654B72E9670FB00148F38 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -54,6 +124,7 @@
 			isa = PBXGroup;
 			children = (
 				7AC654B62E9670FB00148F38 /* StarLaunch.app */,
+				7A6467A82F0E779000100B14 /* StarLaunchWidgetExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -61,6 +132,28 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		7A6467A72F0E778F00100B14 /* StarLaunchWidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7A6467C22F0E779000100B14 /* Build configuration list for PBXNativeTarget "StarLaunchWidgetExtension" */;
+			buildPhases = (
+				7A6467A42F0E778F00100B14 /* Sources */,
+				7A6467A52F0E778F00100B14 /* Frameworks */,
+				7A6467A62F0E778F00100B14 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				7A6467AE2F0E779000100B14 /* StarLaunchWidget */,
+			);
+			name = StarLaunchWidgetExtension;
+			packageProductDependencies = (
+			);
+			productName = StarLaunchWidgetExtension;
+			productReference = 7A6467A82F0E779000100B14 /* StarLaunchWidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		7AC654B52E9670FB00148F38 /* StarLaunch */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 7AC654C92E9670FC00148F38 /* Build configuration list for PBXNativeTarget "StarLaunch" */;
@@ -68,10 +161,12 @@
 				7AC654B22E9670FB00148F38 /* Sources */,
 				7AC654B32E9670FB00148F38 /* Frameworks */,
 				7AC654B42E9670FB00148F38 /* Resources */,
+				7A6467BF2F0E779000100B14 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				7A6467BD2F0E779000100B14 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				7AC654B82E9670FB00148F38 /* StarLaunch */,
@@ -90,9 +185,12 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 2600;
-				LastUpgradeCheck = 2600;
+				LastSwiftUpdateCheck = 2620;
+				LastUpgradeCheck = 2620;
 				TargetAttributes = {
+					7A6467A72F0E778F00100B14 = {
+						CreatedOnToolsVersion = 26.2;
+					};
 					7AC654B52E9670FB00148F38 = {
 						CreatedOnToolsVersion = 26.0.1;
 					};
@@ -114,11 +212,19 @@
 			projectRoot = "";
 			targets = (
 				7AC654B52E9670FB00148F38 /* StarLaunch */,
+				7A6467A72F0E778F00100B14 /* StarLaunchWidgetExtension */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		7A6467A62F0E778F00100B14 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		7AC654B42E9670FB00148F38 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -129,6 +235,13 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		7A6467A42F0E778F00100B14 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		7AC654B22E9670FB00148F38 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -138,18 +251,92 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		7A6467BD2F0E779000100B14 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 7A6467A72F0E778F00100B14 /* StarLaunchWidgetExtension */;
+			targetProxy = 7A6467BC2F0E779000100B14 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		7A6467C02F0E779000100B14 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = StarLaunchWidgetExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 6JK9S83RN9;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = StarLaunchWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "StarLaunch Widget";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = cansagnak.apps.starlaunch.widget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		7A6467C12F0E779000100B14 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = StarLaunchWidgetExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 6JK9S83RN9;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = StarLaunchWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "StarLaunch Widget";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = cansagnak.apps.starlaunch.widget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		7AC654CA2E9670FC00148F38 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = StarLaunch/StarLaunch.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = 6JK9S83RN9;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = StarLaunch/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = StarLaunch;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.reference";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -181,12 +368,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = StarLaunch/StarLaunch.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = 6JK9S83RN9;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = StarLaunch/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = StarLaunch;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.reference";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -218,6 +407,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -272,6 +462,7 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -282,6 +473,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -329,6 +521,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				VALIDATE_PRODUCT = YES;
 			};
@@ -337,6 +530,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		7A6467C22F0E779000100B14 /* Build configuration list for PBXNativeTarget "StarLaunchWidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7A6467C02F0E779000100B14 /* Debug */,
+				7A6467C12F0E779000100B14 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		7AC654B12E9670FB00148F38 /* Build configuration list for PBXProject "StarLaunch" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

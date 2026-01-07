@@ -103,6 +103,7 @@ enum L10n {
     static var tabDashboard: String { "tab.dashboard".localized }
     static var tabLaunches: String { "tab.launches".localized }
     static var tabFavorites: String { "tab.favorites".localized }
+    static var tabCompare: String { "tab.compare".localized }
     static var tabSettings: String { "tab.settings".localized }
 
     static var splashTitle: String { "splash.title".localized }
@@ -125,6 +126,12 @@ enum L10n {
     static var onboardingNext: String { "onboarding.next".localized }
     static var onboardingOfflineTitle: String { "onboarding.offline.title".localized }
     static var onboardingOfflineDesc: String { "onboarding.offline.description".localized }
+    static var onboardingWidgetsTitle: String { "onboarding.widgets.title".localized }
+    static var onboardingWidgetsDesc: String { "onboarding.widgets.description".localized }
+    static var onboardingCalendarTitle: String { "onboarding.calendar.title".localized }
+    static var onboardingCalendarDesc: String { "onboarding.calendar.description".localized }
+    static var onboardingCompareTitle: String { "onboarding.compare.title".localized }
+    static var onboardingCompareDesc: String { "onboarding.compare.description".localized }
 
     static var dashboardTitle: String { "dashboard.title".localized }
     static var dashboardStarship: String { "dashboard.starship".localized }
@@ -215,4 +222,27 @@ enum L10n {
     static var launchStatusScheduled: String { "launch.status.scheduled".localized }
     static var launchStatusLaunched: String { "launch.status.launched".localized }
     static var launchStatusTbd: String { "launch.status.tbd".localized }
+
+    // MARK: - Calendar
+    static var calendarAddToCalendar: String { "calendar.addToCalendar".localized }
+    static var calendarRemoveFromCalendar: String { "calendar.removeFromCalendar".localized }
+    static var calendarAdded: String { "calendar.added".localized }
+    static var calendarRemoved: String { "calendar.removed".localized }
+    static var calendarReminderTitle: String { "calendar.reminderTitle".localized }
+    static var calendarReminder15Min: String { "calendar.reminder.15min".localized }
+    static var calendarReminder1Hour: String { "calendar.reminder.1hour".localized }
+    static var calendarReminder1Day: String { "calendar.reminder.1day".localized }
+    static var calendarNoReminder: String { "calendar.noReminder".localized }
+    static var calendarErrorAccessDenied: String { "calendar.error.accessDenied".localized }
+    static var calendarErrorInvalidDate: String { "calendar.error.invalidDate".localized }
+    static var calendarErrorSaveFailed: String { "calendar.error.saveFailed".localized }
+    static var calendarErrorDeleteFailed: String { "calendar.error.deleteFailed".localized }
+    static var calendarErrorNotFound: String { "calendar.error.notFound".localized }
+
+    // MARK: - Compare
+    static var compareTitle: String { "compare.title".localized }
+    static var compareSelectLaunches: String { "compare.selectLaunches".localized }
+    static var compareMaxSelected: String { "compare.maxSelected".localized }
+    static var compareEmpty: String { "compare.empty".localized }
+    static var compareClear: String { "compare.clear".localized }
 }

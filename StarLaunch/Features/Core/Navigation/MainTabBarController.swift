@@ -16,6 +16,7 @@ final class MainTabBarController: UITabBarController {
     private lazy var dashboardNavController = createNavigationController()
     private lazy var launchesNavController = createNavigationController()
     private lazy var favoritesNavController = createNavigationController()
+    private lazy var compareNavController = createNavigationController()
 
     init(
         factory: ViewModelFactoryProtocol = ViewModelFactory(),
@@ -57,6 +58,7 @@ final class MainTabBarController: UITabBarController {
         dashboardNavController.tabBarItem.title = L10n.tabDashboard
         launchesNavController.tabBarItem.title = L10n.tabLaunches
         favoritesNavController.tabBarItem.title = L10n.tabFavorites
+        compareNavController.tabBarItem.title = L10n.tabCompare
         settingsNavController.tabBarItem.title = L10n.tabSettings
     }
 
@@ -154,12 +156,22 @@ final class MainTabBarController: UITabBarController {
             image: UIImage(systemName: "gearshape"),
             selectedImage: UIImage(systemName: "gearshape.fill")
         )
-        settingsNavController.tabBarItem.tag = 3
+        settingsNavController.tabBarItem.tag = 4
+
+        let compareVC = CompareViewController()
+        compareNavController.setViewControllers([compareVC], animated: false)
+        compareNavController.tabBarItem = UITabBarItem(
+            title: L10n.tabCompare,
+            image: UIImage(systemName: "chart.bar.xaxis"),
+            selectedImage: UIImage(systemName: "chart.bar.xaxis")
+        )
+        compareNavController.tabBarItem.tag = 3
 
         viewControllers = [
             dashboardNavController,
             launchesNavController,
             favoritesNavController,
+            compareNavController,
             settingsNavController,
         ]
     }
@@ -191,7 +203,7 @@ extension MainTabBarController: UITabBarControllerDelegate {
     ) {
         HapticManager.shared.selectionChanged()
 
-        let tabNames = ["Dashboard", "Launches", "Favorites", "Settings"]
+        let tabNames = ["Dashboard", "Launches", "Favorites", "Compare", "Settings"]
         if let index = viewControllers?.firstIndex(of: viewController), index < tabNames.count {
             analyticsService.trackScreen(tabNames[index])
         }

@@ -20,6 +20,7 @@
 "tab.dashboard" = "Ana Sayfa";
 "tab.launches" = "Fırlatmalar";
 "tab.favorites" = "Favoriler";
+"tab.compare" = "Karşılaştır";
 "tab.settings" = "Ayarlar";
 
 // MARK: - Splash
@@ -42,6 +43,12 @@
 "onboarding.next" = "İleri";
 "onboarding.offline.title" = "Çevrimdışı Çalışır";
 "onboarding.offline.description" = "İnternet olmasa bile önbelleğe alınmış verilere erişin. Uzay verileriniz her zaman yanınızda.";
+"onboarding.widgets.title" = "Ana Ekran Widget'ları";
+"onboarding.widgets.description" = "Ana ekranınıza widget ekleyin ve bir sonraki fırlatmayı anında görün.";
+"onboarding.calendar.title" = "Takvim Entegrasyonu";
+"onboarding.calendar.description" = "Fırlatmaları takviminize ekleyin ve hatırlatıcı ayarlayarak hiçbir kalkışı kaçırmayın.";
+"onboarding.compare.title" = "Fırlatmaları Karşılaştır";
+"onboarding.compare.description" = "En fazla 3 fırlatmayı yan yana karşılaştırarak görevleri analiz edin.";
 
 // MARK: - Dashboard
 "dashboard.title" = "Ana Sayfa";
@@ -143,3 +150,27 @@
 "launch.status.scheduled" = "PLANLANDI";
 "launch.status.launched" = "FIRLATILDI";
 "launch.status.tbd" = "BELİRSİZ";
+
+// MARK: - Calendar
+"calendar.addToCalendar" = "Takvime Ekle";
+"calendar.removeFromCalendar" = "Takvimden Kaldır";
+"calendar.added" = "Takvime Eklendi";
+"calendar.removed" = "Takvimden Kaldırıldı";
+"calendar.reminderTitle" = "Hatırlatıcı Ayarla";
+"calendar.reminder.15min" = "15 dakika önce";
+"calendar.reminder.1hour" = "1 saat önce";
+"calendar.reminder.1day" = "1 gün önce";
+"calendar.noReminder" = "Hatırlatıcı yok";
+"calendar.error.accessDenied" = "Takvim erişimi reddedildi. Lütfen Ayarlar'dan etkinleştirin.";
+"calendar.error.invalidDate" = "Geçersiz fırlatma tarihi";
+"calendar.error.saveFailed" = "Etkinlik kaydedilemedi";
+"calendar.error.deleteFailed" = "Etkinlik silinemedi";
+"calendar.error.notFound" = "Etkinlik bulunamadı";
+
+// MARK: - Compare
+"compare.title" = "Karşılaştır";
+"compare.selectLaunches" = "Fırlatma Seç";
+"compare.maxSelected" = "En fazla 3 fırlatma karşılaştırılabilir";
+"compare.empty" = "Fırlatma Seçilmedi";
+"compare.clear" = "Tümünü Temizle";
+

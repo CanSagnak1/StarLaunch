@@ -68,6 +68,10 @@ Proje, modern iOS geliştirme pratiklerini sergilemek amacıyla **tamamen progra
 | **Çoklu Dil Desteği** | Türkçe ve İngilizce tam lokalizasyon |
 | **Bildirimler** | Fırlatma hatırlatıcıları |
 | **Haptic Feedback** | Dokunsal geri bildirim |
+| **Ana Ekran Widget'ları** | Small, Medium, Large widget'lar ile fırlatma takibi |
+| **Kilit Ekranı Widget'ları** | Kilidi açmadan geri sayımı görün |
+| **Takvim Entegrasyonu** | Fırlatmaları takviminize ekleyin (EventKit) |
+| **Fırlatma Karşılaştırma** | 3 fırlatmayı yan yana karşılaştırın |
 
 ---
 

@@ -20,6 +20,7 @@
 "tab.dashboard" = "Dashboard";
 "tab.launches" = "Launches";
 "tab.favorites" = "Favorites";
+"tab.compare" = "Compare";
 "tab.settings" = "Settings";
 
 // MARK: - Splash
@@ -42,6 +43,12 @@
 "onboarding.next" = "Next";
 "onboarding.offline.title" = "Works Offline";
 "onboarding.offline.description" = "Access cached data even without internet. Your space data is always with you.";
+"onboarding.widgets.title" = "Home Screen Widgets";
+"onboarding.widgets.description" = "Add widgets to your home screen to see the next launch at a glance.";
+"onboarding.calendar.title" = "Calendar Integration";
+"onboarding.calendar.description" = "Add launches to your calendar and set reminders so you never miss a liftoff.";
+"onboarding.compare.title" = "Compare Launches";
+"onboarding.compare.description" = "Compare up to 3 launches side by side to analyze missions.";
 
 // MARK: - Dashboard
 "dashboard.title" = "Dashboard";
@@ -143,3 +150,27 @@
 "launch.status.scheduled" = "SCHEDULED";
 "launch.status.launched" = "LAUNCHED";
 "launch.status.tbd" = "TBD";
+
+// MARK: - Calendar
+"calendar.addToCalendar" = "Add to Calendar";
+"calendar.removeFromCalendar" = "Remove from Calendar";
+"calendar.added" = "Added to Calendar";
+"calendar.removed" = "Removed from Calendar";
+"calendar.reminderTitle" = "Set Reminder";
+"calendar.reminder.15min" = "15 minutes before";
+"calendar.reminder.1hour" = "1 hour before";
+"calendar.reminder.1day" = "1 day before";
+"calendar.noReminder" = "No reminder";
+"calendar.error.accessDenied" = "Calendar access denied. Please enable in Settings.";
+"calendar.error.invalidDate" = "Invalid launch date";
+"calendar.error.saveFailed" = "Failed to save event";
+"calendar.error.deleteFailed" = "Failed to delete event";
+"calendar.error.notFound" = "Event not found";
+
+// MARK: - Compare
+"compare.title" = "Compare";
+"compare.selectLaunches" = "Select Launches";
+"compare.maxSelected" = "Maximum 3 launches can be compared";
+"compare.empty" = "No Launches Selected";
+"compare.clear" = "Clear All";
+

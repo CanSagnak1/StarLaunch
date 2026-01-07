@@ -94,6 +94,12 @@ final class LaunchListViewModel: ObservableObject {
 
                 offlineDataManager.saveLaunches(self.launchItems)
 
+                // Update widget data
+                if let nextLaunch = self.launchItems.first {
+                    SharedDataManager.shared.saveNextLaunch(nextLaunch)
+                }
+                SharedDataManager.shared.saveUpcomingLaunches(self.launchItems)
+
                 self.isLoading = false
 
             } catch let error as NetworkError {
@@ -131,6 +137,12 @@ final class LaunchListViewModel: ObservableObject {
                 self.isOfflineMode = false
 
                 offlineDataManager.saveLaunches(self.launchItems)
+
+                // Update widget data
+                if let nextLaunch = self.launchItems.first {
+                    SharedDataManager.shared.saveNextLaunch(nextLaunch)
+                }
+                SharedDataManager.shared.saveUpcomingLaunches(self.launchItems)
 
             } catch let error as NetworkError {
                 handleError(error)

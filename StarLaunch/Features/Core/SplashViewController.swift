@@ -64,7 +64,6 @@ final class SplashViewController: UIViewController {
     private let viewModel = DashboardViewModel()
     private var cancellables = Set<AnyCancellable>()
 
-
     private let gradientBackgroundLayer: CAGradientLayer = {
         let layer = CAGradientLayer()
         layer.colors = [
@@ -261,7 +260,23 @@ final class SplashViewController: UIViewController {
     }
 
     private func navigateToDashboard() {
-        if let sceneDelegate = view.window?.windowScene?.delegate as? SceneDelegate {
+        guard let sceneDelegate = view.window?.windowScene?.delegate as? SceneDelegate else {
+            return
+        }
+
+        if OnboardingManager.shared.shouldShowOnboarding {
+            let onboardingVC = OnboardingViewController()
+            onboardingVC.onComplete = {
+                sceneDelegate.setupMainApp()
+            }
+            onboardingVC.modalPresentationStyle = .fullScreen
+
+            if let window = sceneDelegate.window {
+                UIView.transition(with: window, duration: 0.5, options: .transitionCrossDissolve) {
+                    window.rootViewController = onboardingVC
+                }
+            }
+        } else {
             sceneDelegate.setupMainApp()
         }
     }
@@ -302,7 +317,6 @@ final class SplashViewController: UIViewController {
 
         present(alert, animated: true)
     }
-
 
     private func setupUI() {
         view.backgroundColor = Colors.appBackground
